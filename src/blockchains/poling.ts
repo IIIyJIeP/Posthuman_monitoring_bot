@@ -27,8 +27,8 @@ export async function start_polling(queryClient: StargateClient, chainName: Chai
 
         const block = await queryClient.getBlock(height)
         const decodedTxs = chainName === 'Juno' ? 
-            await decodeTxsJuno(block)
-        :await decodeTxsOsmosis(block)
+            decodeTxsJuno(block)
+        :decodeTxsOsmosis(block)
         
         const telegramMsgs = chainName === 'Juno' ? 
             await processTxsJuno(decodedTxs, queryClient)

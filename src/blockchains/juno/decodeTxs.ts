@@ -10,7 +10,7 @@ export type DecodedTX = {
     msgs: Any[]
 }
 
-export async function decodeTxsInBlock(block: Block) {
+export function decodeTxsInBlock(block: Block) {
     const decodedTxs: DecodedTX[] = []
     for (const tx of block.txs) {
         const txId = toHex(sha256(tx)).toUpperCase();

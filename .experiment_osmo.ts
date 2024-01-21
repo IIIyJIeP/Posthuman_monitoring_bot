@@ -5,8 +5,8 @@ import { processTxsOsmosis } from './src/blockchains/osmosis/processTXs'
 import { TelegramBot } from './src/telegram/telegram'
 
 const heights = [
-    13373220,
-    13373224
+    13377647,
+    
 ]
 
 const {
@@ -21,7 +21,7 @@ async function app() {
     
     for (const height of heights) {
         const block = await osmoQueryClient.getBlock(height)
-        const decodedTxs = await decodeTxsInBlock(block)
+        const decodedTxs = decodeTxsInBlock(block)
 
         const telegramMsgs = await processTxsOsmosis(decodedTxs, osmoQueryClient)
         
