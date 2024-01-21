@@ -2,7 +2,7 @@ import 'dotenv/config'
 import { FmtString } from 'telegraf/format'
 import { IndexedTx, StargateClient} from '@cosmjs/stargate'
 import { fmt, link, bold, code } from 'telegraf/format'
-import { DecodedTX } from './decodeTxs'
+import { DecodedTX } from '../decodeTxs'
 import { cosmwasm, ibc } from "juno-network"
 import { minAmountPHMN as minAmountPHMNprod, minAmountPHMNtest,
     explorerTxJunoURL, contractPHMNJuno, contractDASHold, contractIbcPhmnJuno } from '../../config.json'

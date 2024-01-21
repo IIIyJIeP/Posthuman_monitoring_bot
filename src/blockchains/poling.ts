@@ -1,8 +1,7 @@
 import { StargateClient} from '@cosmjs/stargate'
 import { ChainName } from './types'
 import { getLastHeight, setLastHeight } from '../db/db'
-import { decodeTxsInBlock as decodeTxsOsmosis} from './osmosis/decodeTxs'
-import { decodeTxsInBlock as decodeTxsJuno} from './juno/decodeTxs'
+import { decodeTxsInBlock} from './decodeTxs'
 import { processTxsOsmosis } from './osmosis/processTXs'
 import { processTxsJuno } from './juno/processTXs'
 import { TelegramBot } from '../telegram/telegram';
@@ -26,9 +25,7 @@ export async function start_polling(queryClient: StargateClient, chainName: Chai
         }
 
         const block = await queryClient.getBlock(height)
-        const decodedTxs = chainName === 'Juno' ? 
-            decodeTxsJuno(block)
-        :decodeTxsOsmosis(block)
+        const decodedTxs = decodeTxsInBlock(block)
         
         const telegramMsgs = chainName === 'Juno' ? 
             await processTxsJuno(decodedTxs, queryClient)

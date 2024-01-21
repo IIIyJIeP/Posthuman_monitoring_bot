@@ -1,6 +1,6 @@
 import 'dotenv/config'
 import { StargateClient} from '@cosmjs/stargate'
-import { decodeTxsInBlock } from './src/blockchains/osmosis/decodeTxs'
+import { decodeTxsInBlock } from './src/blockchains/decodeTxs'
 import { processTxsOsmosis } from './src/blockchains/osmosis/processTXs'
 import { TelegramBot } from './src/telegram/telegram'
 
