@@ -38,7 +38,7 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
                         const amount = +executeContractMsg.transfer.amount/1e6
                         if (amount >= minAmountPHMN) {
                             if (indexedTx === null) indexedTx = await queryClient.getTx(tx.txId)
-                            if (indexedTx?.code === 0) {
+                            if (indexedTx!.code === 0) {
                                 const sender = msg.sender
                                 const toAddress = executeContractMsg.transfer.recipient as string
                                 
@@ -72,7 +72,7 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
                         +executeContractMsg.mint.amount/1e6 >= minAmountPHMN
                     ) {
                         if (indexedTx === null) indexedTx = await queryClient.getTx(tx.txId)
-                        if (indexedTx?.code === 0) {
+                        if (indexedTx!.code === 0) {
                             const amount = +executeContractMsg.mint.amount/1e6
                             
                             const sender = msg.sender
@@ -92,7 +92,7 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
                         const amount = +executeContractMsg.send.amount/1e6
                         if (amount >= minAmountPHMN) {
                             if (indexedTx === null) indexedTx = await queryClient.getTx(tx.txId)
-                            if (indexedTx?.code === 0) {
+                            if (indexedTx!.code === 0) {
                                 const dasMsg = JSON.parse(new TextDecoder().decode(Buffer.from(executeContractMsg.send.msg, 'base64')))
                                 const sender = msg.sender
                                 const senderDaoDaoNick = await getDaoDaoNickname(sender)
@@ -120,8 +120,8 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
                         const timeout = ibcMsg.timeout as number
                         if (amount >= minAmountPHMN) {
                             if (indexedTx === null) indexedTx = await queryClient.getTx(tx.txId)
-                            if (indexedTx?.code === 0) {
-                                const packet_sequence = indexedTx.events.find((evnt) => 
+                            if (indexedTx!.code === 0) {
+                                const packet_sequence = indexedTx!.events.find((evnt) => 
                                     evnt.type === 'send_packet' && 
                                     JSON.parse(evnt.attributes.find((attr) => attr.key === 'packet_data')!.value)
                                         .amount === Math.round(amount*1e6).toString() &&
@@ -161,8 +161,8 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
                     // #DAS #Withdraw
                     if (executeContractMsg.claim) {
                         if (indexedTx === null) indexedTx = await queryClient.getTx(tx.txId)
-                        if (indexedTx?.code === 0) {
-                            const amount = +(indexedTx.events.find((ev) =>
+                        if (indexedTx!.code === 0) {
+                            const amount = +(indexedTx!.events.find((ev) =>
                                 ev.type === 'wasm' &&
                                 ev.attributes.find((atr) => atr.key === '_contract_address')?.value === contractPHMNJuno
                             )?.attributes.find((atr) => atr.key === 'amount')?.value || '0')/1e6
@@ -179,12 +179,12 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
                     // #DAS #Unlock
                     } else if (executeContractMsg.unstake) {
                         if (indexedTx === null) indexedTx = await queryClient.getTx(tx.txId)
-                        if (indexedTx?.code === 0) {
+                        if (indexedTx!.code === 0) {
                             const amount = +executeContractMsg.unstake.amount/1e6
                             if (amount >= minAmountPHMN) {
                                 const sender = msg.sender
                                 const senderDaoDaoNick = await getDaoDaoNickname(sender)
-                                const claimDuration = +(indexedTx.events.find((evnt) => 
+                                const claimDuration = +(indexedTx!.events.find((evnt) => 
                                     evnt.type === 'wasm' &&
                                     evnt.attributes.find((atr) => 
                                         atr.key === 'claim_duration'
@@ -213,7 +213,7 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
                     const acknowledgement = JSON.parse(new TextDecoder().decode(msg.acknowledgement))
                     if (acknowledgement.result === 'AQ==') {
                         if (indexedTx === null) indexedTx = await queryClient.getTx(tx.txId)
-                        if (indexedTx?.code === 0) {
+                        if (indexedTx!.code === 0) {
                             telegramMsgs.push(telegramMsg)
                         }
                     }
