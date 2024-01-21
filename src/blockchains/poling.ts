@@ -35,8 +35,8 @@ export async function start_polling(queryClient: StargateClient, chainName: Chai
         : await processTxsOsmosis(decodedTxs, queryClient)
         
         for (const msg of telegramMsgs) {
-            await sendMsgWhalesChannel(msg)
             console.log(msg)
+            await sendMsgWhalesChannel(msg)
         }
 
         setLastHeight(chainName, height)
