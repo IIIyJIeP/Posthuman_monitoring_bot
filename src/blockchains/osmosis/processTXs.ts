@@ -9,6 +9,7 @@ import { minAmountPHMN as minAmountPHMNprod, minAmountPHMNtest,
 import { isPHMNpool, getPoolInfo } from './poolInfo'
 import { Registry } from "@cosmjs/proto-signing"
 import { MsgSend } from 'osmojs/dist/codegen/cosmos/bank/v1beta1/tx'
+import { getIndexedTx } from '../getTx'
 
 const registry = new Registry(defaultRegistryTypes)
 
@@ -38,10 +39,10 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
                 const decodedMsg = osmosis.poolmanager.v1beta1.MsgSplitRouteSwapExactAmountIn.decode(msg.value)
                 const route0pools = decodedMsg.routes[0].pools
                 if (route0pools[route0pools.length - 1].tokenOutDenom === denomPHMNosmosis) {
-                    if (indexedTx === null) indexedTx = await queryClient.getTx(tx.txId)
-                    if (indexedTx!.code === 0) {
+                    if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                    if (indexedTx.code === 0) {
                         const amount = +osmosis.poolmanager.v1beta1.MsgSplitRouteSwapExactAmountInResponse
-                            .decode(indexedTx!.msgResponses[i].value)
+                            .decode(indexedTx.msgResponses[i].value)
                             .tokenOutAmount/1000000
                         if (amount >= minAmountPHMN) {
                             const sender = decodedMsg.sender
@@ -62,8 +63,8 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
                     }
                     amount /= 1e6
                     if (amount >= minAmountPHMN) {
-                        if (indexedTx === null) indexedTx = await queryClient.getTx(tx.txId)
-                        if (indexedTx!.code === 0) {
+                        if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                        if (indexedTx.code === 0) {
                             const sender = decodedMsg.sender
                             const nickNameDAODAO = await getDaoDaoNickname(sender)
                             
@@ -82,8 +83,8 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
                 if (decodedMsg.tokenIn.denom === denomPHMNosmosis) {
                     const amount = +decodedMsg.tokenIn.amount/1000000
                     if (amount >= minAmountPHMN) {
-                        if (indexedTx === null) indexedTx = await queryClient.getTx(tx.txId)
-                        if (indexedTx!.code === 0) {
+                        if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                        if (indexedTx.code === 0) {
                             const sender = decodedMsg.sender
                             const nickNameDAODAO = await getDaoDaoNickname(sender)
                             
@@ -96,10 +97,10 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
                     }
                 // #Buy
                 } else if (decodedMsg.routes[decodedMsg.routes.length - 1].tokenOutDenom === denomPHMNosmosis) {
-                    if (indexedTx === null) indexedTx = await queryClient.getTx(tx.txId)
-                    if (indexedTx!.code === 0) {
+                    if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                    if (indexedTx.code === 0) {
                         const amount = +osmosis.poolmanager.v1beta1.MsgSwapExactAmountInResponse
-                            .decode(indexedTx!.msgResponses[i].value)
+                            .decode(indexedTx.msgResponses[i].value)
                             .tokenOutAmount/1000000
                         if (amount >= minAmountPHMN) {
                             const sender = decodedMsg.sender
@@ -124,8 +125,8 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
                     }
                 }
                 if (amount >= minAmountPHMN) {
-                    if (indexedTx === null) indexedTx = await queryClient.getTx(tx.txId)
-                    if (indexedTx!.code === 0) {
+                    if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                    if (indexedTx.code === 0) {
                         if (countMsgs === 0) {
                             const sender = decodedMsg.fromAddress as string
                             const toAddress = decodedMsg.toAddress as string
@@ -158,11 +159,11 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
             } else if (msg.typeUrl === '/osmosis.gamm.v1beta1.MsgJoinPool') {
                 const decodedMsg = osmosis.gamm.v1beta1.MsgJoinPool.decode(msg.value)
                 if (isPHMNpool(decodedMsg.poolId)) {
-                    if (indexedTx === null) indexedTx = await queryClient.getTx(tx.txId)
-                    if (indexedTx!.code === 0) {
+                    if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                    if (indexedTx.code === 0) {
                         const poolInfo = getPoolInfo(decodedMsg.poolId)
                         const tokenIns = osmosis.gamm.v1beta1.MsgJoinPoolResponse
-                            .decode(indexedTx!.msgResponses[i].value)
+                            .decode(indexedTx.msgResponses[i].value)
                             .tokenIn
                         const amountPHMN = +tokenIns.find((coin)=>coin.denom === denomPHMNosmosis)!.amount/1e6
                         const amountSecondToken = +tokenIns
@@ -192,8 +193,8 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
                     +decodedMsg.tokenIn.amount/1e6 >= minAmountPHMN
                 ) {
                 
-                    if (indexedTx === null) indexedTx = await queryClient.getTx(tx.txId)
-                    if (indexedTx!.code === 0) {
+                    if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                    if (indexedTx.code === 0) {
                         const sender = decodedMsg.sender
                         const senderDaoDaoNick = await getDaoDaoNickname(sender)
                         const poolInfo = getPoolInfo(decodedMsg.poolId)
@@ -211,10 +212,10 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
             } else if (msg.typeUrl === '/osmosis.gamm.v1beta1.MsgExitPool') {
                 const decodedMsg = osmosis.gamm.v1beta1.MsgExitPool.decode(msg.value)
                 if (isPHMNpool(decodedMsg.poolId)) {
-                    if (indexedTx === null) indexedTx = await queryClient.getTx(tx.txId)
-                    if (indexedTx!.code === 0) {
+                    if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                    if (indexedTx.code === 0) {
                         const response = osmosis.gamm.v1beta1.MsgExitPoolResponse
-                            .decode(indexedTx!.msgResponses[i].value)
+                            .decode(indexedTx.msgResponses[i].value)
 
                         const poolInfo = getPoolInfo(decodedMsg.poolId)
 
@@ -249,10 +250,10 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
                     const receiver = decodedMsg.receiver
                     const amount = +decodedMsg.token.amount/1e6
                     if (amount >= minAmountPHMN) {
-                        if (indexedTx === null) indexedTx = await queryClient.getTx(tx.txId)
-                        if (indexedTx!.code === 0) {
+                        if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                        if (indexedTx.code === 0) {
                             const packet_sequence = ibc.applications.transfer.v1.MsgTransferResponse
-                                .decode(indexedTx!.msgResponses[i].value)
+                                .decode(indexedTx.msgResponses[i].value)
                             .sequence
 
                             const [
@@ -297,8 +298,8 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
                             deleteIbcTx(paccketSequence)
                             const acknowledgement = JSON.parse(new TextDecoder().decode(decodedMsg.acknowledgement))
                             if (acknowledgement.result === 'MQ==') {
-                                if (indexedTx === null) indexedTx = await queryClient.getTx(tx.txId)
-                                if (indexedTx?.code === 0) {
+                                if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                                if (indexedTx.code === 0) {
                                     telegramMsgs.push(telegramMsg)
                                 }
                             }
