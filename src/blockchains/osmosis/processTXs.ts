@@ -22,13 +22,11 @@ function deleteIbcTx (sequence: bigint) {
 export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: StargateClient) {
     const telegramMsgs: FmtString[] = []
     for (const tx of decodedTxs) {
-        console.log(tx.txId)
         let telegramMsg = fmt``
         let countMsgs = 0
         let indexedTx: IndexedTx | null = null
         for (let i = 0; i < tx.msgs.length; i++) {
             const msg = tx.msgs[i]
-            console.log(msg.typeUrl)
             // #SplitRouteSwap
             if (msg.typeUrl === '/osmosis.poolmanager.v1beta1.MsgSplitRouteSwapExactAmountIn') {
                 // #Buy
