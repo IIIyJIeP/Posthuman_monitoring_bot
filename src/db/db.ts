@@ -1,5 +1,6 @@
 import { ChainName } from "../blockchains/types";
 
+// Simple Memmory DB. TODO: ?
 const db = {
     "lastHeight": {
         "Osmosis":0,

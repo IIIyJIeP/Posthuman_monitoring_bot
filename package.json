@@ -10,7 +10,8 @@
     "watch": "tsc -w",
     "start": "node ./dist/index.js",
     "dev": "nodemon --inspect ./dist/index.js",
-    "experiment": "ts-node ./.experiment.ts",
+    "experiment_juno": "ts-node ./.experiment_juno.ts",
+    "experiment_osmo": "ts-node ./.experiment_osmo.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
@@ -21,6 +22,7 @@
   },
   "dependencies": {
     "dotenv": "^16.3.1",
+    "juno-network": "^0.18.1",
     "osmojs": "^16.7.0",
     "telegraf": "^4.15.3"
   }

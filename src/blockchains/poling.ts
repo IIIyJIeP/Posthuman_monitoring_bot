@@ -1,14 +1,21 @@
 import { StargateClient} from '@cosmjs/stargate'
 import { ChainName } from './types'
 import { getLastHeight, setLastHeight } from '../db/db'
-import { decodeTxsInBlock as decodeTxsOsmosis} from './osmosis/processTxs'
-import { decodeTxsInBlock as decodeTxsJuno} from './juno/processTxs'
+import { decodeTxsInBlock as decodeTxsOsmosis} from './osmosis/decodeTxs'
+import { decodeTxsInBlock as decodeTxsJuno} from './juno/decodeTxs'
+import { processTxsOsmosis } from './osmosis/processTXs'
+import { processTxsJuno } from './juno/processTXs'
+import { TelegramBot } from '../telegram/telegram';
+
+const {
+    sendMsgWhalesChannel,
+} = TelegramBot
 
 export async function start_polling(queryClient: StargateClient, chainName: ChainName) {
     try {
         let height = getLastHeight(chainName)
         const currentHeight = await queryClient.getHeight()
-        if (height === 0) height = currentHeight - 10
+        if (height === 0) height = currentHeight - 1
         
         if (currentHeight > height) {
             height++
@@ -23,8 +30,15 @@ export async function start_polling(queryClient: StargateClient, chainName: Chai
             await decodeTxsJuno(block)
         :await decodeTxsOsmosis(block)
         
-        console.log(decodedTxs)
+        const telegramMsgs = chainName === 'Juno' ? 
+            await processTxsJuno(decodedTxs, queryClient)
+        : await processTxsOsmosis(decodedTxs, queryClient)
         
+        for (const msg of telegramMsgs) {
+            await sendMsgWhalesChannel(msg)
+            console.log(msg)
+        }
+
         setLastHeight(chainName, height)
         start_polling(queryClient, chainName)
     } catch (err) {
