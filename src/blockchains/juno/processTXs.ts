@@ -329,6 +329,35 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
 
                             countMsgs++
                         }
+                    // #ProposalRejected 
+                    } else if (executeContractMsg.close) {
+                        if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                        if (indexedTx.code === 0) {
+                            const proposalNumber: string  = executeContractMsg.close.proposal_id?.toString() || ''
+                            
+                            telegramMsg = fmt(telegramMsg, '🤵  #Governance #DAS #ProposalRejected  ❌\n',
+                                bold('Proposal #' + proposalNumber + ' rejected'), '\n',
+                                link('Proposal details', dasProposalsURL + '/A' + proposalNumber), '\n\n'
+                            )
+                            
+                            const depositEvent = indexedTx.events.find((evnt) => 
+                                evnt.type === 'wasm' &&
+                                evnt.attributes.find((attr) => attr.key === 'action')?.value === 'transfer' &&
+                                evnt.attributes.find((attr) => attr.key === 'from')?.value === contractDasPropose &&
+                                evnt.attributes.find((attr) => attr.key === '_contract_address')?.value === contractPHMNJuno
+                            )
+                            if (depositEvent) {
+                                const toAddress = depositEvent.attributes.find((attr) => attr.key === 'to')?.value || ''
+                                const toAddressDaoDaoNick = await getDaoDaoNickname(toAddress)
+                                const amount = +(depositEvent.attributes.find((attr) => attr.key === 'amount')?.value || '0')/1e6
+
+                                telegramMsg = fmt(telegramMsg, bold(amount.toString() + ' PHMN'),
+                                    ' deposit returned to address ', code(toAddress), toAddressDaoDaoNick, '\n',
+                                )
+                            }
+
+                            countMsgs++
+                        }
                     }
                 // #Governance #CoreTeamSubDAO
                 } else if (msg.contract === contractCoreTeamGovernance) {
@@ -344,6 +373,19 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
                             telegramMsg = fmt(telegramMsg, '🤵  #Governance #CoreTeamSubDAO #ProposalExecuted  ✅\n',
                                 'Proposal #', proposalNumber, ' passed and executed by ', code(sender), senderDaoDaoNick, '\n',
                                 link('Proposal details', coreTeamProposalsURL + '/A' + proposalNumber), '\n\n'
+                            )
+                            
+                            countMsgs++
+                        }
+                    // #ProposalRejected 
+                    } else if (executeContractMsg.close) {
+                        if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                        if (indexedTx.code === 0) {
+                            const proposalNumber: string  = executeContractMsg.close.proposal_id?.toString() || ''
+                            
+                            telegramMsg = fmt(telegramMsg, '🤵  #Governance #CoreTeamSubDAO #ProposalRejected  ❌\n',
+                                bold('Proposal #' + proposalNumber + ' rejected'), '\n',
+                                link('Proposal details', dasProposalsURL + '/A' + proposalNumber), '\n\n'
                             )
                             
                             countMsgs++

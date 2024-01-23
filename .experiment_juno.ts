@@ -5,7 +5,7 @@ import { processTxsJuno } from './src/blockchains/juno/processTXs'
 import { TelegramBot } from './src/telegram/telegram'
 
 const heights = [
-    13025949,
+    12392603,
     
 ]
 
