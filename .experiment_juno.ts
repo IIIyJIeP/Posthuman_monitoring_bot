@@ -5,8 +5,8 @@ import { processTxsJuno } from './src/blockchains/juno/processTXs'
 import { TelegramBot } from './src/telegram/telegram'
 
 const heights = [
-    13291465,
-    13291470
+    13022011,
+    
 ]
 
 const junoRpcEndpoint = process.env.RPC_ENDPOINT_JUNO || 'https://rpc.osmosis.zone'

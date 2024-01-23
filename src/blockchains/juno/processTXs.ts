@@ -5,7 +5,9 @@ import { fmt, link, bold, code } from 'telegraf/format'
 import { DecodedTX } from '../decodeTxs'
 import { cosmwasm, ibc } from "juno-network"
 import { minAmountPHMN as minAmountPHMNprod, minAmountPHMNtest,
-    explorerTxJunoURL, contractPHMNJuno, contractDASHold, contractIbcPhmnJuno } from '../../config.json'
+    explorerTxJunoURL, contractPHMNJuno, contractDASHold, contractIbcPhmnJuno,
+    contractDasPropose, dasProposalsURL, contractCoreTeamPropose, coreTeamProposalsURL
+} from '../../config.json'
 import { getDaoDaoNickname } from '../daoDaoNames'
 import { getIndexedTx } from '../getTx'
 
@@ -201,6 +203,84 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
                                 )
                                 countMsgs++
                             }
+                        }
+                    }
+                // #Governance #DAS #NewProposal
+                } else if (msg.contract === contractDasPropose) {
+                    const executeContractMsg = JSON.parse(new TextDecoder().decode(msg.msg))
+                    if (executeContractMsg.propose?.msg?.propose) {
+                        if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                        if (indexedTx.code === 0) {
+                            const sender = msg.sender
+                            const senderDaoDaoNick = await getDaoDaoNickname(sender)
+                            const title = executeContractMsg.propose.msg.propose.title as string || ''
+                            const proposalNumber = indexedTx.events.find((evnt) => 
+                                evnt.type === 'wasm' &&
+                                evnt.attributes.find((attr) => attr.key === 'action')?.value === 'propose'
+                                    
+                            )?.attributes.find((attr) => attr.key === 'proposal_id')?.value || ''
+                            
+                            telegramMsg = fmt(telegramMsg, '🤵  #Governance #DAS #NewProposal  📝\n',
+                                'Proposal from DAS member ', code(sender), senderDaoDaoNick, '\n\n',
+                                bold(title), '\n',
+                                link('Proposal details', dasProposalsURL + '/A' + proposalNumber), '\n\n'
+                            )
+                            
+                            const depositEvent = indexedTx.events.find((evnt) => 
+                                evnt.type === 'wasm' &&
+                                evnt.attributes.find((attr) => attr.key === 'action')?.value === 'transfer_from' &&
+                                evnt.attributes.find((attr) => attr.key === 'to')?.value === contractDasPropose &&
+                                evnt.attributes.find((attr) => attr.key === '_contract_address')?.value === contractPHMNJuno
+                            )
+                            if (depositEvent) {
+                                const from = depositEvent.attributes.find((attr) => attr.key === 'from')?.value || ''
+                                const fromDaoDaoNick = await getDaoDaoNickname(from)
+                                const amount = +(depositEvent.attributes.find((attr) => attr.key === 'amount')?.value || '0')/1e6
+
+                                telegramMsg = fmt(telegramMsg, bold(amount.toString() + ' PHMN'),
+                                    ' deposit made from address ', code(from), fromDaoDaoNick, '\n',
+                                )
+                            }
+                            countMsgs++
+                        }
+                    }
+                // #Governance #CoreTeamSubDAO #NewProposal
+                } else if (msg.contract === contractCoreTeamPropose) {
+                    const executeContractMsg = JSON.parse(new TextDecoder().decode(msg.msg))
+                    if (executeContractMsg.propose?.msg?.propose) {
+                        if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                        if (indexedTx.code === 0) {
+                            const sender = msg.sender
+                            const senderDaoDaoNick = await getDaoDaoNickname(sender)
+                            const title = executeContractMsg.propose.msg.propose.title as string || ''
+                            const proposalNumber = indexedTx.events.find((evnt) => 
+                                evnt.type === 'wasm' &&
+                                evnt.attributes.find((attr) => attr.key === 'action')?.value === 'propose'
+                                    
+                            )?.attributes.find((attr) => attr.key === 'proposal_id')?.value || ''
+                            
+                            telegramMsg = fmt(telegramMsg, '🤵  #Governance #CoreTeamSubDAO #NewProposal  📝\n',
+                                'Proposal from CORE-TEAM member ', code(sender), senderDaoDaoNick, '\n\n',
+                                bold(title), '\n',
+                                link('Proposal details', coreTeamProposalsURL + '/A' + proposalNumber), '\n\n'
+                            )
+                            
+                            const depositEvent = indexedTx.events.find((evnt) => 
+                                evnt.type === 'wasm' &&
+                                evnt.attributes.find((attr) => attr.key === 'action')?.value === 'transfer_from' &&
+                                evnt.attributes.find((attr) => attr.key === 'to')?.value === contractCoreTeamPropose &&
+                                evnt.attributes.find((attr) => attr.key === '_contract_address')?.value === contractPHMNJuno
+                            )
+                            if (depositEvent) {
+                                const from = depositEvent.attributes.find((attr) => attr.key === 'from')?.value || ''
+                                const fromDaoDaoNick = await getDaoDaoNickname(from)
+                                const amount = +(depositEvent.attributes.find((attr) => attr.key === 'amount')?.value || '0')/1e6
+
+                                telegramMsg = fmt(telegramMsg, bold(amount.toString() + ' PHMN'),
+                                    ' deposit made from address ', code(from), fromDaoDaoNick, '\n',
+                                )
+                            }
+                            countMsgs++
                         }
                     }
                 }

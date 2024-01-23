@@ -7,6 +7,10 @@
     "contractPHMNJuno": "juno1rws84uz7969aaa7pej303udhlkt3j9ca0l3egpcae98jwak9quzq8szn2l",
     "contractDASHold": "juno1jktfdt5g2d0fguvy8r8pl4gly7wps8phkwy08z6upc4nazkumrwq7lj0vn",
     "contractIbcPhmnJuno": "juno1v4887y83d6g28puzvt8cl0f3cdhd3y6y9mpysnsp3k8krdm7l6jqgm0rkn",
+    "contractDasPropose": "juno169m5zgfxnquukj2cgrkgxq4gsuw9ee7pjez4g9g4mkvafzkums6q5632mp",
+    "dasProposalsURL": "https://dao.daodao.zone/juno1h5ex5dn62arjwvwkh88r475dap8qppmmec4sgxzmtdn5tnmke3lqwpplgg/proposals",
+    "contractCoreTeamPropose": "juno1j7svmmdwuuyrnmw75yp5ut6kufwmlpjwzcrws3xl53aekffce25sj3a0uz",
+    "coreTeamProposalsURL": "https://dao.daodao.zone/juno1mptmak8ecmzwghtd4mep82jdkmdt0n6d8ggcd5hjmrfxasjc0epstkvwha/proposals",
     "denomPHMNosmosis": "ibc/D3B574938631B0A1BA704879020C696E514CFADAA7643CDE4BD5EB010BDE327B",
     "poolsPHMNosmosis": [
         {
