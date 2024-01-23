@@ -1,16 +1,20 @@
-import { daoDaoNamesURL } from '../config.json'
+import { daoDaoNamesURL, dasTreasuryAddress } from '../config.json'
+
+const names = {
+    [dasTreasuryAddress]: 'DAS treasury'
+}
 
 export async function getDaoDaoNickname (address:string) {
+    let name = ''
     try{
         const response = await fetch(daoDaoNamesURL + address)
         if (response.ok) {
-            const name = (await response.json()).name
-            if (name !== null) {
-                return '(' + name + ')'
-            }
-        } 
+            name = (await response.json()).name || ''
+        }
     } catch (err) {
         console.error(err)
     }
-    return ''
+    name = name === '' ? names[address] || '' : name
+    name = name === '' ? '' : '(' + name + ')'
+    return name
 }

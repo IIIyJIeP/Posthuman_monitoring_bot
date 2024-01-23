@@ -11,6 +11,9 @@
     "dasProposalsURL": "https://dao.daodao.zone/juno1h5ex5dn62arjwvwkh88r475dap8qppmmec4sgxzmtdn5tnmke3lqwpplgg/proposals",
     "contractCoreTeamPropose": "juno1j7svmmdwuuyrnmw75yp5ut6kufwmlpjwzcrws3xl53aekffce25sj3a0uz",
     "coreTeamProposalsURL": "https://dao.daodao.zone/juno1mptmak8ecmzwghtd4mep82jdkmdt0n6d8ggcd5hjmrfxasjc0epstkvwha/proposals",
+    "contractDasGovernance": "juno1mf3wshvp2vr7kuqrjk4le33l4seeltwara9nm3m2xt8kckg7kekset6njw",
+    "dasTreasuryAddress": "juno1h5ex5dn62arjwvwkh88r475dap8qppmmec4sgxzmtdn5tnmke3lqwpplgg",
+    "contractCoreTeamGovernance": "juno1r5nd2ewjch0x0mvf0hv0hlv4qd85c4xsuvggkfn328s8n8ms3dgsch55fh",
     "denomPHMNosmosis": "ibc/D3B574938631B0A1BA704879020C696E514CFADAA7643CDE4BD5EB010BDE327B",
     "poolsPHMNosmosis": [
         {
