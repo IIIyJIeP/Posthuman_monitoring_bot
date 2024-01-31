@@ -15,7 +15,7 @@ const accesRights = async (ctx: Context, next: Function) => {
     if (!ctx.from || ctx.from.id  === ADMIN) {
         return next()
     }
-    return ctx.reply('This is a private bot. You do not have access rights.')
+    //return ctx.reply('This is a private bot. You do not have access rights.')
 };
 
 process.once("SIGINT", () => {
