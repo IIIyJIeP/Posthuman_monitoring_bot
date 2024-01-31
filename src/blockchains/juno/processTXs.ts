@@ -7,7 +7,7 @@ import { cosmwasm, ibc } from "juno-network"
 import { minAmountPHMN as minAmountPHMNprod, minAmountPHMNtest,
     explorerTxJunoURL, contractPHMNJuno, contractDASHold, contractIbcPhmnJuno,
     contractDasPropose, dasProposalsURL, contractCoreTeamPropose, coreTeamProposalsURL,
-    contractDasGovernance, contractCoreTeamGovernance
+    contractDasGovernance, contractCoreTeamGovernance, contractTestSubDaoPropose, testSubDaoProposalsURL
 } from '../../config.json'
 import { getDaoDaoNickname } from '../daoDaoNames'
 import { getIndexedTx } from '../getTx'
@@ -268,7 +268,29 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
                             countMsgs++
                         }
                     }
-                // #Governance #DAS
+                // #Governance #TestSubDAO #NewProposal
+                } else if (msg.contract === contractTestSubDaoPropose) {
+                    const executeContractMsg = JSON.parse(new TextDecoder().decode(msg.msg))
+                    if (executeContractMsg.propose?.msg?.propose) {
+                        if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                        if (indexedTx.code === 0) {
+                            const sender = msg.sender
+                            const senderDaoDaoNick = await getDaoDaoNickname(sender)
+                            const title = executeContractMsg.propose.msg.propose.title as string || ''
+                            const proposalNumber = indexedTx.events.find((evnt) => 
+                                evnt.type === 'wasm' &&
+                                evnt.attributes.find((attr) => attr.key === 'action')?.value === 'propose'
+                                    
+                            )?.attributes.find((attr) => attr.key === 'proposal_id')?.value || ''
+                            
+                            telegramMsg = fmt(telegramMsg, '🤵  #Governance #TestSubDAO #NewProposal  📝\n',
+                                'Proposal from Test-SubDAO member ', code(sender), senderDaoDaoNick, '\n\n',
+                                bold(title), '\n',
+                                link('Proposal details', testSubDaoProposalsURL + '/A' + proposalNumber), '\n\n'
+                            )
+                            countMsgs++
+                        }
+                    }
                 } else if (msg.contract === contractDasGovernance) {
                     const executeContractMsg = JSON.parse(new TextDecoder().decode(msg.msg))
                     // #ProposalExecuted
