@@ -16,6 +16,7 @@
     "contractDasGovernance": "juno1mf3wshvp2vr7kuqrjk4le33l4seeltwara9nm3m2xt8kckg7kekset6njw",
     "dasTreasuryAddress": "juno1h5ex5dn62arjwvwkh88r475dap8qppmmec4sgxzmtdn5tnmke3lqwpplgg",
     "contractCoreTeamGovernance": "juno1r5nd2ewjch0x0mvf0hv0hlv4qd85c4xsuvggkfn328s8n8ms3dgsch55fh",
+    "contractTestSubDaoGovernance": "juno17ngnhzn6qaakahjtzmhzh9utf8n58dkqg2pu7mkj5cjxzqfhwekqy6c552",
     "denomPHMNosmosis": "ibc/D3B574938631B0A1BA704879020C696E514CFADAA7643CDE4BD5EB010BDE327B",
     "poolsPHMNosmosis": [
         {
