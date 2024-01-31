@@ -15,7 +15,7 @@ const accesRights = async (ctx: Context, next: Function) => {
     if (!ctx.from || ctx.from.id  === ADMIN) {
         return next()
     }
-    //return ctx.reply('This is a private bot. You do not have access rights.')
+    return //ctx.reply('This is a private bot. You do not have access rights.')
 };
 
 process.once("SIGINT", () => {
@@ -34,7 +34,6 @@ export class TelegramBot {
         .use(accesRights)
         .use(session())
         .start((ctx) => ctx.reply('Welcome'))
-        .hears('hi', (ctx) => ctx.reply('Hey there'))
         .hears('id', (ctx) => {
             ctx.reply('Chat ID:' + ctx.chat.id.toString() + 
                 '\nTopic ID:' + ctx.message.message_thread_id?.toString() +
