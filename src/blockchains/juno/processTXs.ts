@@ -270,7 +270,7 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
                         }
                     }
                 // #Governance #TestSubDAO #NewProposal
-                } else if (msg.contract === contractTestSubDaoPropose) {
+                } else if (0) { // } else if (msg.contract === contractTestSubDaoPropose) {
                     const executeContractMsg = JSON.parse(new TextDecoder().decode(msg.msg))
                     if (executeContractMsg.propose?.msg?.propose) {
                         if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
@@ -415,7 +415,7 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
                         }
                     }
                 // #Governance #TestSubDAO
-                } else if (msg.contract === contractTestSubDaoGovernance) {
+            } else if (0) { //} else if (msg.contract === contractTestSubDaoGovernance) {
                     const executeContractMsg = JSON.parse(new TextDecoder().decode(msg.msg))
                     // #ProposalExecuted
                     if (executeContractMsg.execute) {
