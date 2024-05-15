@@ -42,6 +42,12 @@
             "secondTokenDenom": "Osmo",
             "secondTokenBaseDenom": "uosmo",
             "secondTokenMultiplier": 1e6
+        },
+        {
+            "poolId": 1776,
+            "secondTokenDenom": "WEIRD",
+            "secondTokenBaseDenom": "ibc/38ADC6FFDDDB7D70B72AD0322CEA8844CB18FAA0A23400DBA8A99D43E18B3748",
+            "secondTokenMultiplier": 1e6
         }
     ]
 
