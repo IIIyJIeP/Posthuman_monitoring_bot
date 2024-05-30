@@ -9,7 +9,7 @@ const heights = [
     
 ]
 
-const junoRpcEndpoint = process.env.RPC_ENDPOINT_JUNO || 'https://rpc.osmosis.zone'
+const junoRpcEndpoint = process.env.RPC_ENDPOINT_JUNO!
 const {
     sendServiceInformation,
 } = TelegramBot

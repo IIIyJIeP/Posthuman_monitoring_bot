@@ -2,7 +2,7 @@ import 'dotenv/config'
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { contractTestSubDaoGovernance } from './src/config.json'
 
-const junoRpcEndpoint = process.env.RPC_ENDPOINT_JUNO || 'https://rpc.osmosis.zone'
+const junoRpcEndpoint = process.env.RPC_ENDPOINT_JUNO!
 
 app()
 async function app() {
