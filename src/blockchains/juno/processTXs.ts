@@ -6,9 +6,7 @@ import { DecodedTX } from '../decodeTxs'
 import { cosmwasm, ibc } from "juno-network"
 import { minAmountPHMN as minAmountPHMNprod, minAmountPHMNtest,
     explorerTxJunoURL, contractPHMNJuno, contractDASHold, contractIbcPhmnJuno,
-    contractDasPropose, dasProposalsURL, contractCoreTeamPropose, coreTeamProposalsURL,
-    contractDasGovernance, contractCoreTeamGovernance, 
-    contractTestSubDaoPropose, testSubDaoProposalsURL, contractTestSubDaoGovernance
+    contractDasPropose, dasProposalsURL, contractDasGovernance
 } from '../../config.json'
 import { getDaoDaoNickname } from '../daoDaoNames'
 import { getIndexedTx } from '../getTx'
@@ -246,52 +244,6 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
                             countMsgs++
                         }
                     }
-                // #Governance #CoreTeamSubDAO #NewProposal
-                } else if (0) { // } else if (msg.contract === contractCoreTeamPropose) { 
-                    const executeContractMsg = JSON.parse(new TextDecoder().decode(msg.msg))
-                    if (executeContractMsg.propose?.msg?.propose) {
-                        if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
-                        if (indexedTx.code === 0) {
-                            const sender = msg.sender
-                            const senderDaoDaoNick = await getDaoDaoNickname(sender)
-                            const title = executeContractMsg.propose.msg.propose.title as string || ''
-                            const proposalNumber = indexedTx.events.find((evnt) => 
-                                evnt.type === 'wasm' &&
-                                evnt.attributes.find((attr) => attr.key === 'action')?.value === 'propose'
-                                    
-                            )?.attributes.find((attr) => attr.key === 'proposal_id')?.value || ''
-                            
-                            telegramMsg = fmt(telegramMsg, '🤵  #Governance #CoreTeamSubDAO #NewProposal  📝\n',
-                                'Proposal from CORE-TEAM member ', code(sender), senderDaoDaoNick, '\n\n',
-                                bold(title), '\n',
-                                link('Proposal details', coreTeamProposalsURL + '/A' + proposalNumber), '\n\n'
-                            )
-                            countMsgs++
-                        }
-                    }
-                // #Governance #TestSubDAO #NewProposal
-                } else if (0) { // } else if (msg.contract === contractTestSubDaoPropose) {
-                    const executeContractMsg = JSON.parse(new TextDecoder().decode(msg.msg))
-                    if (executeContractMsg.propose?.msg?.propose) {
-                        if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
-                        if (indexedTx.code === 0) {
-                            const sender = msg.sender
-                            const senderDaoDaoNick = await getDaoDaoNickname(sender)
-                            const title = executeContractMsg.propose.msg.propose.title as string || ''
-                            const proposalNumber = indexedTx.events.find((evnt) => 
-                                evnt.type === 'wasm' &&
-                                evnt.attributes.find((attr) => attr.key === 'action')?.value === 'propose'
-                                    
-                            )?.attributes.find((attr) => attr.key === 'proposal_id')?.value || ''
-                            
-                            telegramMsg = fmt(telegramMsg, '🤵  #Governance #TestSubDAO #NewProposal  📝\n',
-                                'Proposal from Test-SubDAO member ', code(sender), senderDaoDaoNick, '\n\n',
-                                bold(title), '\n',
-                                link('Proposal details', testSubDaoProposalsURL + '/A' + proposalNumber), '\n\n'
-                            )
-                            countMsgs++
-                        }
-                    }
                 } else if (msg.contract === contractDasGovernance) {
                     const executeContractMsg = JSON.parse(new TextDecoder().decode(msg.msg))
                     // #ProposalExecuted
@@ -382,71 +334,7 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
                             countMsgs++
                         }
                     }
-                // #Governance #CoreTeamSubDAO
-                } else if (0) { // } else if (msg.contract === contractCoreTeamGovernance) {
-                    const executeContractMsg = JSON.parse(new TextDecoder().decode(msg.msg))
-                    // #ProposalExecuted
-                    if (executeContractMsg.execute) {
-                        if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
-                        if (indexedTx.code === 0) {
-                            const sender = msg.sender
-                            const senderDaoDaoNick = await getDaoDaoNickname(sender)
-                            const proposalNumber: string  = executeContractMsg.execute.proposal_id?.toString() || ''
-                            
-                            telegramMsg = fmt(telegramMsg, '🤵  #Governance #CoreTeamSubDAO #ProposalExecuted  ✅\n',
-                                'Proposal #', proposalNumber, ' passed and executed by ', code(sender), senderDaoDaoNick, '\n',
-                                link('Proposal details', coreTeamProposalsURL + '/A' + proposalNumber), '\n\n'
-                            )
-                            
-                            countMsgs++
-                        }
-                    // #ProposalRejected 
-                    } else if (executeContractMsg.close) {
-                        if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
-                        if (indexedTx.code === 0) {
-                            const proposalNumber: string  = executeContractMsg.close.proposal_id?.toString() || ''
-                            
-                            telegramMsg = fmt(telegramMsg, '🤵  #Governance #CoreTeamSubDAO #ProposalRejected  ❌\n',
-                                bold('Proposal #' + proposalNumber + ' rejected'), '\n',
-                                link('Proposal details', coreTeamProposalsURL + '/A' + proposalNumber), '\n\n'
-                            )
-                            
-                            countMsgs++
-                        }
-                    }
-                // #Governance #TestSubDAO
-                } else if (0) { //} else if (msg.contract === contractTestSubDaoGovernance) {
-                    const executeContractMsg = JSON.parse(new TextDecoder().decode(msg.msg))
-                    // #ProposalExecuted
-                    if (executeContractMsg.execute) {
-                        if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
-                        if (indexedTx.code === 0) {
-                            const sender = msg.sender
-                            const senderDaoDaoNick = await getDaoDaoNickname(sender)
-                            const proposalNumber: string  = executeContractMsg.execute.proposal_id?.toString() || ''
-                            
-                            telegramMsg = fmt(telegramMsg, '🤵  #Governance #TestSubDAO #ProposalExecuted  ✅\n',
-                                'Proposal #', proposalNumber, ' passed and executed by ', code(sender), senderDaoDaoNick, '\n',
-                                link('Proposal details', testSubDaoProposalsURL + '/A' + proposalNumber), '\n\n'
-                            )
-                            
-                            countMsgs++
-                        }
-                    // #ProposalRejected 
-                    } else if (executeContractMsg.close) {
-                        if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
-                        if (indexedTx.code === 0) {
-                            const proposalNumber: string  = executeContractMsg.close.proposal_id?.toString() || ''
-                            
-                            telegramMsg = fmt(telegramMsg, '🤵  #Governance #TestSubDAO #ProposalRejected  ❌\n',
-                                bold('Proposal #' + proposalNumber + ' rejected'), '\n',
-                                link('Proposal details', testSubDaoProposalsURL + '/A' + proposalNumber), '\n\n'
-                            )
-                            
-                            countMsgs++
-                        }
-                    }
-                }
+                } 
             // #IbcAcknowledgevent
             } else if (tx.msgs[i].typeUrl === '/ibc.core.channel.v1.MsgAcknowledgement') {
                 const msg = ibc.core.channel.v1.MsgAcknowledgement.decode(tx.msgs[i].value)
