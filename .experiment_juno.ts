@@ -5,7 +5,7 @@ import { processTxsJuno } from './src/blockchains/juno/processTXs'
 import { TelegramBot } from './src/telegram/telegram'
 
 const heights = [
-    13552076,
+    16736030,
     
 ]
 
@@ -22,7 +22,7 @@ async function app() {
     
     for (const height of heights) {
         const block = await junoQueryClient.getBlock(height)
-        const decodedTxs = await decodeTxsInBlock(block)
+        const decodedTxs = decodeTxsInBlock(block)
 
         const telegramMsgs = await processTxsJuno(decodedTxs, junoQueryClient)
         
