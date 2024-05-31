@@ -54,8 +54,8 @@ export class TelegramBot {
         }
     }
     
-    private static send(msg: FmtString, chatId: number) {
-        return this.bot.telegram.sendMessage(
+    private static async send(msg: FmtString, chatId: number) {
+        await this.bot.telegram.sendMessage(
             chatId, 
             msg,
             {
@@ -65,10 +65,10 @@ export class TelegramBot {
     }
     
     static async sendMsgRespChannel(msg: FmtString) {
-        await this.send(msg, RESP_CHAT_ID)
+        await TelegramBot.send(msg, RESP_CHAT_ID)
     }
 
     static async sendServiceInformation(msg: FmtString) {
-        await this.send(msg, SERVICE_CHAT_ID)
+        await TelegramBot.send(msg, SERVICE_CHAT_ID)
     }
 }
