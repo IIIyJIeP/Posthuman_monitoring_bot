@@ -1,8 +1,8 @@
 {
-  "name": "phmn_whales_bot",
+  "name": "posthuman_monitoring_bot",
   "version": "1.0.0",
   "main": "index.js",
-  "repository": "git@github.com:IIIyJIeP/PHMN_whales_bot.git",
+  "repository": "git@github.com:IIIyJIeP/Posthuman_monitoring_bot.git",
   "author": "IIIyJIeP <brazhnikovna@gmail.com>",
   "license": "MIT",
   "scripts": {
