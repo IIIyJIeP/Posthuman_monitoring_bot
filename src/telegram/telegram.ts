@@ -54,23 +54,21 @@ export class TelegramBot {
         }
     }
     
-    static async sendMsgRespChannel(msg: FmtString) {
-        await TelegramBot.bot.telegram.sendMessage(
-            RESP_CHAT_ID, 
+    private static send(msg: FmtString, chatId: number) {
+        return this.bot.telegram.sendMessage(
+            chatId, 
             msg,
             {
                 disable_web_page_preview: true,
             }
         )
     }
+    
+    static async sendMsgRespChannel(msg: FmtString) {
+        await this.send(msg, RESP_CHAT_ID)
+    }
 
     static async sendServiceInformation(msg: FmtString) {
-        await TelegramBot.bot.telegram.sendMessage(
-            SERVICE_CHAT_ID, 
-            msg,
-            {
-                disable_web_page_preview: true,
-            }
-        )
+        await this.send(msg, SERVICE_CHAT_ID)
     }
 }

@@ -4,9 +4,10 @@ import { decodeTxsInBlock} from './decodeTxs'
 import { processTxsJuno } from './juno/processTXs'
 import { TelegramBot } from '../telegram/telegram';
 
-const {
-    sendMsgRespChannel: sendMsgWhalesChannel,
-} = TelegramBot
+const DEPLOYMENT = process.env.DEPLOYMENT
+const sendMsgTG = DEPLOYMENT === 'production'? 
+    TelegramBot.sendMsgRespChannel 
+: TelegramBot.sendServiceInformation
 
 export async function start_polling(queryClient: StargateClient) {
     try {
@@ -29,7 +30,7 @@ export async function start_polling(queryClient: StargateClient) {
         
         for (const msg of telegramMsgs) {
             console.log(msg)
-            await sendMsgWhalesChannel(msg)
+            await sendMsgTG(msg)
         }
 
         setLastHeight(height)
