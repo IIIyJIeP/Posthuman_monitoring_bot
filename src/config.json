@@ -5,6 +5,106 @@
     "contractRESPJuno": "juno1uar7p2ecw208r2jj056nvh2kgz4myhkyhufjgyqclc8nqugquams6gc3at",
     "daoDaoNamesURL": "https://pfpk.daodao.zone/address/",
 
-    "dasTreasuryAddress": "juno1h5ex5dn62arjwvwkh88r475dap8qppmmec4sgxzmtdn5tnmke3lqwpplgg"
-    
+    "subdaoTreasuryAddresses" : [
+        {
+            "subdaoTag": "DAS_treasury",
+            "treasuryAddress": "juno1h5ex5dn62arjwvwkh88r475dap8qppmmec4sgxzmtdn5tnmke3lqwpplgg"
+        },
+        {
+            "subdaoTag": "CoreTeamSubDAO",
+            "treasuryAddress": "juno1mptmak8ecmzwghtd4mep82jdkmdt0n6d8ggcd5hjmrfxasjc0epstkvwha"
+        },
+        {
+            "subdaoTag": "StrategicSubDao",
+            "treasuryAddress": "juno1ejdt5w55ad8c3syj8mph3xhchee2jtlcfpw9sm0mq2fh80qygudsjzrwjj"
+        },
+        {
+            "subdaoTag": "ReputationSubDAO",
+            "treasuryAddress": "juno1uwmtcc8lxc7waqy9takvnsautlfx5qp688jykvvuk4fezd8jf6fs549ym2"
+        },
+        {
+            "subdaoTag": "InvestmentsSubDAO",
+            "treasuryAddress": "juno198r8220mah5jn5fnxcgjds4j4pf48wyz0e40m0zdtw2385m08zmqqwhumq"
+        },
+        {
+            "subdaoTag": "WyndLiquiditySubDAO",
+            "treasuryAddress": "juno1gsrhz6vqgjyz9ar3tr7w4hzk5n6dtwt66hjtjyn0hqycje3pzpaq73395c"
+        },
+        {
+            "subdaoTag": "ContentSubDAO",
+            "treasuryAddress": "juno1ujl7hlglktdll3g8d3sttw83vw969ncwl3npzfaj7qplgzhhu92qdfdte4"
+        },
+        {
+            "subdaoTag": "TechSubDAO",
+            "treasuryAddress": "juno1l2t0k2jnpkkcp7rg8sxlnwasqsdmwpvre8dwjs6w2s2uzaj2qgkq4akcus"
+        },
+        {
+            "subdaoTag": "ZealySubDAO",
+            "treasuryAddress": "juno1gs3hkuvjaexu52u9s65e8wj5he753dl4l9yn6vew7hszvxhdg6sqanluwc"
+        },
+        {
+            "subdaoTag": "RuCommunity",
+            "treasuryAddress": "juno15tv8ufpg8t7mke4rs66cqcg0x297y55numn2x6a8kz703reldalqg9w40e"
+        },
+        {
+            "subdaoTag": "AdminRuCommunity",
+            "treasuryAddress": "juno1332n0ydjufkl0agp5mp5tcpyprdlh6yd2wmzyddhssu8j3sx6alse4yqwk"
+        },
+        {
+            "subdaoTag": "EngCommunity",
+            "treasuryAddress": "juno1q0yn0r4q8h7d3qmtlq7mrxuyn6wc4g99p94hr4d47ftu09wtfkmqwlscpl"
+        },
+        {
+            "subdaoTag": "AdminEngCommunity",
+            "treasuryAddress": "juno13k62fjqupyyhlxjt7adrfenzfpu2698d8emwvgkkjlxmj506gvfsf9hfe9"
+        },
+        {
+            "subdaoTag": "EducationSubDAO",
+            "treasuryAddress": "juno1kfsf0p07a9unhnn3f0qv2vkcwyr8vuzxvjempy739e6ry5acgfeqdkfyuv"
+        },
+        {
+            "subdaoTag": "NftSubDAO",
+            "treasuryAddress": "juno10cf0pmy6crjdgyd6y5svzwuf59qfu3kqva63cghp82x8ccw3ytesgtpf4m"
+        },
+        {
+            "subdaoTag": "PosthumanNftSubDAO",
+            "treasuryAddress": "juno1vknye0x0uxd0ypmr28qreg36fvuyyyna0ve8a7lrx2lepl4ehscsapfyvf"
+        },
+        {
+            "subdaoTag": "ExpeditionNftSubDAO",
+            "treasuryAddress": "juno1xnejf270qt5gn7nr379k6cjw9p0x8putxr7wf7g7pv5azdudlc7q3kpv6k"
+        },
+        {
+            "subdaoTag": "WeirdFriendsNft",
+            "treasuryAddress": "juno1htezk0nukqah65d9qn9xg7cvk0pd4207farr0lldjjt5f2qhk9hqnlp7nx"
+        },
+        {
+            "subdaoTag": "SinGardenSubDAO",
+            "treasuryAddress": "juno1fr3unygwarqphtygggwhplpzx4d0q8uymmnua2vnz39cp94lxzgq0z5rzg"
+        },
+        {
+            "subdaoTag": "NftGangSubDAO",
+            "treasuryAddress": "juno1kttu5tdrj74xsv0zfn7sjreu34fsuysa42auv892zsavn9pnqmwsyq2hpg"
+        },
+        {
+            "subdaoTag": "DefiGeeksSubDAO",
+            "treasuryAddress": "juno1a9qj7402e2fkwqjtvnpa5pckv9zdpg34aucdzurvy627gsgxud7qz0undv"
+        },
+        {
+            "subdaoTag": "MerchSubDAO",
+            "treasuryAddress": "juno14hy6440dw02rpw2t0mh6a6ge8deepfapjfkqax89mwdne0pk0wmstcqzth"
+        },
+        {
+            "subdaoTag": "GameFiSubDAO",
+            "treasuryAddress": "juno1xt8lgs35qntfqts0r686c9t0whuw2g065er3qahzc7qq8wjnpntsq499ge"
+        },
+        {
+            "subdaoTag": "MetarchySubDAO",
+            "treasuryAddress": "juno1an06lq90x3fkghls7rqeh0p3300dq75ahrcgm5zf7s0u6wd4lx5szkj2j7"
+        },
+        {
+            "subdaoTag": "UaCommunity",
+            "treasuryAddress": "juno10p866hul4r7jzp894lcxzjg74zk4g484m8z4y82ha3z44ccqymkqdvaqvh"
+        }
+    ]
 }
