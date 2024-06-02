@@ -6,8 +6,8 @@ if (!process.env.TELEGRAM_BOT_TOKEN) throw new Error('"TELEGRAM_BOT_TOKEN" env v
 const TOKEN = process.env.TELEGRAM_BOT_TOKEN
 if (!process.env.TELEGRAM_ADMIN_ID) throw new Error('"TELEGRAM_ADMIN_ID" env var is required!');
 const ADMIN = +process.env.TELEGRAM_ADMIN_ID
-if (!process.env.WHALES_CHAT_ID) throw new Error('"WHALES_CHAT_ID" env var is required!')
-const WHALES_CHAT_ID = +process.env.WHALES_CHAT_ID
+if (!process.env.PHMNN_UNLIM_CHAT_ID) throw new Error('"PHMNN_UNLIM_CHAT_ID" env var is required!')
+const CHANNEL_CHAT_ID = +process.env.PHMNN_UNLIM_CHAT_ID
 if (!process.env.SERVICE_CHAT_ID) throw new Error('"SERVICE_CHAT_ID" env var is required!')
 const SERVICE_CHAT_ID = +process.env.SERVICE_CHAT_ID
 
@@ -54,9 +54,9 @@ export class TelegramBot {
         }
     }
     
-    static async sendMsgWhalesChannel(msg: FmtString) {
+    static async sendMsgToChannel(msg: FmtString) {
         await TelegramBot.bot.telegram.sendMessage(
-            WHALES_CHAT_ID, 
+            CHANNEL_CHAT_ID, 
             msg,
             {
                 disable_web_page_preview: true,
