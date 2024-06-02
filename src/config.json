@@ -1,6 +1,6 @@
 {
-    "minAmountPHMN": 10.0,
-    "minAmountPHMNtest": 0.000001,
+    "minAmountPHMN": 0,
+    "minAmountPHMNtest": 0,
     "daoDaoNamesURL": "https://pfpk.daodao.zone/address/",
     "explorerTxOsmosisURL": "https://www.mintscan.io/osmosis/tx/",
     "explorerTxJunoURL": "https://www.mintscan.io/juno/tx/",
