@@ -54,14 +54,14 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
                                         getDaoDaoNickname(toAddress)
                                     ]) 
                                     
-                                    telegramMsg = fmt(telegramMsg, '🐳  #Juno #Send  📬\n', 
+                                    telegramMsg = fmt(telegramMsg, '🪙  #Juno #Send  📬\n', 
                                         'Address ', code(sender), senderDaoDaoNick, ' sent ', bold(amount.toString() + ' PHMN'), ' to ', code(toAddress), toAddressDaoDaoNick, '\n'
                                     )
                                 } else {
                                     const toAddressDaoDaoNick = await getDaoDaoNickname(toAddress)
                             
                                     if (countMsgs > 1) telegramMsg.text = telegramMsg.text.replace(/...\n$/, '')
-                                    telegramMsg = fmt(telegramMsg, '🐳  #Juno #Send  📬\n', 
+                                    telegramMsg = fmt(telegramMsg, '🪙  #Juno #Send  📬\n', 
                                         'sent ', bold(amount.toString() + ' PHMN'), ' to ', code(toAddress), toAddressDaoDaoNick, '\n',
                                         '...\n'
                                     )
@@ -81,7 +81,7 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
                             const sender = msg.sender
                             const senderDaoDaoNick = await getDaoDaoNickname(sender)
 
-                            telegramMsg = fmt(telegramMsg, '🐳  #Mint  🪙\n', 
+                            telegramMsg = fmt(telegramMsg, '🪙  #Mint  🪙\n', 
                                 'Address ', code(sender), senderDaoDaoNick, ' minted ', 
                                 bold(amount.toString() + ' PHMN'), '\n'
                             )
@@ -102,7 +102,7 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
                                 
                                 // #DAS #Hold
                                 if (dasMsg.stake) {
-                                    telegramMsg = fmt(telegramMsg, '🐳  #DAS #Hold  🔐\n', 
+                                    telegramMsg = fmt(telegramMsg, '🪙  #DAS #Hold  🔐\n', 
                                         'Address ', code(sender), senderDaoDaoNick, 
                                         ' just increased holdings in the DAS by ', 
                                         bold(amount.toString() + ' PHMN'), '\n'
@@ -140,7 +140,7 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
                                     getDaoDaoNickname(receiver),
                                 ])
     
-                                telegramMsg = fmt(telegramMsg, '🐳  #Juno #IBCtransfer  📬\n', 
+                                telegramMsg = fmt(telegramMsg, '🪙  #Juno #IBCtransfer  📬\n', 
                                     'Address ', code(sender), senderDaoDaoNick, ' sent over IBC protocol ', 
                                     bold(amount.toString() + ' PHMN'),
                                     ' to ', code(receiver), receiverDaoDaoNick, '\n',
@@ -173,7 +173,7 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
                                 const sender = msg.sender
                                 const senderDaoDaoNick = await getDaoDaoNickname(sender)
 
-                                telegramMsg = fmt(telegramMsg, '🐳  #DAS #Withdraw  📬🪙📭\n', 
+                                telegramMsg = fmt(telegramMsg, '🪙  #DAS #Withdraw  📬🪙📭\n', 
                                     'Address ', code(sender), senderDaoDaoNick, ' withdraw from the DAS ', bold(amount.toString() + ' PHMN'), '\n'
                                 )
                                 countMsgs++
@@ -196,7 +196,7 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
                                     atr.key === 'claim_duration'
                                 )?.value.replace('time: ', '') || '-86400')/86400
 
-                                telegramMsg = fmt(telegramMsg, '🐳  #DAS #Unlock  🔓\n', 
+                                telegramMsg = fmt(telegramMsg, '🪙  #DAS #Unlock  🔓\n', 
                                     'Address ', code(sender), senderDaoDaoNick, ' requested unlock ', 
                                     bold(amount.toString() + ' PHMN'), ' from DAS. Claim duration ', 
                                     claimDuration.toString(), ' days\n'
@@ -295,7 +295,7 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
 
                                 const amount = +(evnt.attributes.find((attr) => attr.key === 'amount')?.value || '0')/1e6
 
-                                telegramMsg = fmt(telegramMsg, '\n', '🐳  #Juno #Send  📬\n',
+                                telegramMsg = fmt(telegramMsg, '\n', '🪙  #Juno #Send  📬\n',
                                     'Address ', code(fromAddress), fromAddressDaoDaoNick, 
                                     ' sent ', bold(amount.toString() + ' PHMN'), ' to ', 
                                     code(toAddress), toAddressDaoDaoNick, '\n'
