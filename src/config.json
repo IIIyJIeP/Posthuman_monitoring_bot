@@ -105,6 +105,10 @@
         {
             "subdaoTag": "UaCommunity",
             "treasuryAddress": "juno10p866hul4r7jzp894lcxzjg74zk4g484m8z4y82ha3z44ccqymkqdvaqvh"
+        },
+        {
+            "subdaoTag": "TestNetSubDAO",
+            "treasuryAddress": "juno1wd8g3ahsnre4e8sltexte04hehtkt76tvqhddc9wsfyj9am4xt0skyqqlc"
         }
     ]
 }
