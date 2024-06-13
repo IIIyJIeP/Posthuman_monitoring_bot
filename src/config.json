@@ -148,6 +148,10 @@
         {
             "subdaoTag": "TestNetSubDAO",
             "treasuryAddress": "juno1wd8g3ahsnre4e8sltexte04hehtkt76tvqhddc9wsfyj9am4xt0skyqqlc"
+        },
+        {
+            "subdaoTag": "InfoSubDAO",
+            "treasuryAddress": "juno1ud8avxjwk5m97s8s5pqd0qhg0lyxqxefjzupyhrqvpq2002svfpq8urfuq"
         }
     ]
 }
