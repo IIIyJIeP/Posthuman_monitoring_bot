@@ -31,7 +31,7 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
         let indexedTx: IndexedTx | null = null
         for (let i = 0; i < tx.msgs.length; i++) {
             // #Juno #MsgExecuteContract
-            if (tx.msgs[i].typeUrl === '/cosmwasm.wasm.v1.MsgExecuteContract') {
+            if (tx.msgs[i].typeUrl === '/cosmwasm.wasm.v1.MsgExecuteContract' && countMsgs < 10) {
                 const msg = cosmwasm.wasm.v1.MsgExecuteContract.decode(tx.msgs[i].value)
                 // #PHMNcontract
                 if (msg.contract === contractPHMNJuno) {
@@ -336,7 +336,7 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
                     }
                 } 
             // #IbcAcknowledgevent
-            } else if (tx.msgs[i].typeUrl === '/ibc.core.channel.v1.MsgAcknowledgement') {
+            } else if (tx.msgs[i].typeUrl === '/ibc.core.channel.v1.MsgAcknowledgement' && countMsgs < 10) {
                 const msg = ibc.core.channel.v1.MsgAcknowledgement.decode(tx.msgs[i].value)
                 const packeSequence = msg.packet?.sequence.toString()||''
                 const telegramMsg = ibcMsgsBuffer.find((msg) => msg.packet_sequence === packeSequence)?.telegramMsg
