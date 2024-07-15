@@ -336,7 +336,7 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
                     }
                 } 
             // #IbcAcknowledgevent
-            } else if (tx.msgs[i].typeUrl === '/ibc.core.channel.v1.MsgAcknowledgement' && countMsgs < 10) {
+            } else if (tx.msgs[i].typeUrl === '/ibc.core.channel.v1.MsgAcknowledgement') {
                 const msg = ibc.core.channel.v1.MsgAcknowledgement.decode(tx.msgs[i].value)
                 const packeSequence = msg.packet?.sequence.toString()||''
                 const telegramMsg = ibcMsgsBuffer.find((msg) => msg.packet_sequence === packeSequence)?.telegramMsg
