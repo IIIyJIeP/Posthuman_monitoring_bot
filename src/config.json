@@ -152,6 +152,10 @@
         {
             "subdaoTag": "InfoSubDAO",
             "treasuryAddress": "juno1ud8avxjwk5m97s8s5pqd0qhg0lyxqxefjzupyhrqvpq2002svfpq8urfuq"
+        },
+        {
+            "subdaoTag": "AISubDAO",
+            "treasuryAddress": "juno1l00nplvtnucaud94fs9y5mmckmrpc5d96kpdm8kxwrpkzhlmhxjq07x3w3"
         }
     ]
 }
