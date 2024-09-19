@@ -6,7 +6,7 @@ import { processTxsOsmosis } from './osmosis/processTXs'
 import { TelegramBot } from '../telegram/telegram';
 
 const DEPLOYMENT = process.env.DEPLOYMENT
-const sendMsg = TelegramBot.sendMsgToChannel
+const sendMsg = TelegramBot.sendServiceInformation
 
 export async function start_polling(queryClient: StargateClient, chainName: ChainName) {
     try {
