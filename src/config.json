@@ -1,6 +1,7 @@
 {
     "minAmount": 0.000001,
     "denomLEGosmosis": "factory/osmo1c3sjhsneuajqn4ke84kqqaf26ct5cjs8z5ale0yv7096wh6fyf6qxmgkph/leg",
+    "contractLegendDAO": "osmo10uwkgzkdhrvmhwc9eyq7sesj3lkzkm82gjf3t4xn26qs2ltcv89stscmye",
     "explorerTxOsmosisURL": "https://www.mintscan.io/osmosis/tx/",
     "subdaoTreasuryAddresses" : [
         {
