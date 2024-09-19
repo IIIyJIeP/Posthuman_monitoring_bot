@@ -3,13 +3,10 @@ import { ChainName } from './types'
 import { getLastHeight, setLastHeight } from '../db/db'
 import { decodeTxsInBlock} from './decodeTxs'
 import { processTxsOsmosis } from './osmosis/processTXs'
-import { processTxsJuno } from './juno/processTXs'
 import { TelegramBot } from '../telegram/telegram';
 
 const DEPLOYMENT = process.env.DEPLOYMENT
-const sendMsg =  DEPLOYMENT === 'production'? 
-    TelegramBot.sendMsgToChannel
-: TelegramBot.sendServiceInformation
+const sendMsg = TelegramBot.sendMsgToChannel
 
 export async function start_polling(queryClient: StargateClient, chainName: ChainName) {
     try {
@@ -28,9 +25,7 @@ export async function start_polling(queryClient: StargateClient, chainName: Chai
         const block = await queryClient.getBlock(height)
         const decodedTxs = decodeTxsInBlock(block)
         
-        const telegramMsgs = chainName === 'Juno' ? 
-            await processTxsJuno(decodedTxs, queryClient)
-        : await processTxsOsmosis(decodedTxs, queryClient)
+        const telegramMsgs =  await processTxsOsmosis(decodedTxs, queryClient)
         
         for (const msg of telegramMsgs) {
             console.log(msg)

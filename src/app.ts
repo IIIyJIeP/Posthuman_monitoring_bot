@@ -4,18 +4,14 @@ import { start_polling } from './blockchains/poling';
 import { TelegramBot } from './telegram/telegram';
 
 const osmoRpcEndpoint = process.env.RPC_ENDPOINT_OSMO || 'https://rpc.osmosis.zone'
-const junoRpcEndpoint = process.env.RPC_ENDPOINT_JUNO || 'https://rpc-juno.ecostake.com'
-
 
 export async function app() {
     try {
         TelegramBot.run()
 
         const osmoQueryClient = await StargateClient.connect(osmoRpcEndpoint)
-        const junoQueryClient = await StargateClient.connect(junoRpcEndpoint)
         
         start_polling(osmoQueryClient, 'Osmosis')
-        start_polling(junoQueryClient, 'Juno')
     } catch (err) {
         console.error(err)
         setTimeout(app, 1000)
