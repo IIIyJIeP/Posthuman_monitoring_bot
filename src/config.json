@@ -1,6 +1,9 @@
 {
-    "minAmountPHMN": 0.000001,
-    "minAmountPHMNtest": 0.000001,
+    "minAmountWEIRD": 0.000001,
+    "minAmountWEIRDtest": 0.000001,
+    "denomWEIRDosmosis": "ibc/38ADC6FFDDDB7D70B72AD0322CEA8844CB18FAA0A23400DBA8A99D43E18B3748",
+    
+
     "daoDaoNamesURL": "https://pfpk.daodao.zone/address/",
     "explorerTxOsmosisURL": "https://www.mintscan.io/osmosis/tx/",
     "explorerTxJunoURL": "https://www.mintscan.io/juno/tx/",
@@ -11,36 +14,16 @@
     "dasProposalsURL": "https://dao.daodao.zone/juno1h5ex5dn62arjwvwkh88r475dap8qppmmec4sgxzmtdn5tnmke3lqwpplgg/proposals",
     "contractDasGovernance": "juno1mf3wshvp2vr7kuqrjk4le33l4seeltwara9nm3m2xt8kckg7kekset6njw",
     "dasTreasuryAddress": "juno1h5ex5dn62arjwvwkh88r475dap8qppmmec4sgxzmtdn5tnmke3lqwpplgg",
-    "denomPHMNosmosis": "ibc/D3B574938631B0A1BA704879020C696E514CFADAA7643CDE4BD5EB010BDE327B",
-    "poolsPHMNosmosis": [
-        {
-            "poolId": 1255,
-            "secondTokenDenom": "Atom",
-            "secondTokenBaseDenom": "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
-            "secondTokenMultiplier": 1e6
-        },
-        {
-            "poolId": 1254,
-            "secondTokenDenom": "IBCX",
-            "secondTokenBaseDenom": "factory/osmo14klwqgkmackvx2tqa0trtg69dmy0nrg4ntq4gjgw2za4734r5seqjqm4gm/uibcx",
-            "secondTokenMultiplier": 1e6
-        },
-        {
-            "poolId": 1366,
-            "secondTokenDenom": "nBTC",
-            "secondTokenBaseDenom": "ibc/75345531D87BD90BF108BE7240BD721CB2CB0A1F16D4EBA71B09EC3C43E15C8F",
-            "secondTokenMultiplier": 1e14
-        },
-        {
-            "poolId": 1738,
-            "secondTokenDenom": "Osmo",
-            "secondTokenBaseDenom": "uosmo",
-            "secondTokenMultiplier": 1e6
-        },
+    
+    
+
+
+    
+    "poolsWEIRDosmosis": [
         {
             "poolId": 1776,
-            "secondTokenDenom": "WEIRD",
-            "secondTokenBaseDenom": "ibc/38ADC6FFDDDB7D70B72AD0322CEA8844CB18FAA0A23400DBA8A99D43E18B3748",
+            "secondTokenDenom": "PHMN",
+            "secondTokenBaseDenom": "ibc/D3B574938631B0A1BA704879020C696E514CFADAA7643CDE4BD5EB010BDE327B",
             "secondTokenMultiplier": 1e6
         }
     ],

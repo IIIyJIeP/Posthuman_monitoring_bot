@@ -6,17 +6,10 @@ if (!process.env.TELEGRAM_BOT_TOKEN) throw new Error('"TELEGRAM_BOT_TOKEN" env v
 const TOKEN = process.env.TELEGRAM_BOT_TOKEN
 if (!process.env.TELEGRAM_ADMIN_ID) throw new Error('"TELEGRAM_ADMIN_ID" env var is required!');
 const ADMIN = +process.env.TELEGRAM_ADMIN_ID
-if (!process.env.PHMNN_UNLIM_CHAT_ID) throw new Error('"PHMNN_UNLIM_CHAT_ID" env var is required!')
-const CHANNEL_CHAT_ID = +process.env.PHMNN_UNLIM_CHAT_ID
+if (!process.env.WEIRD_CHAT_ID) throw new Error('"WEIRD_CHAT_ID" env var is required!')
+const CHANNEL_CHAT_ID = +process.env.WEIRD_CHAT_ID
 if (!process.env.SERVICE_CHAT_ID) throw new Error('"SERVICE_CHAT_ID" env var is required!')
 const SERVICE_CHAT_ID = +process.env.SERVICE_CHAT_ID
-
-const accesRights = async (ctx: Context, next: Function) => {
-    if (!ctx.from || ctx.from.id  === ADMIN) {
-        return next()
-    }
-    return //ctx.reply('This is a private bot. You do not have access rights.')
-};
 
 process.once("SIGINT", () => {
     TelegramBot.bot.stop("SIGINT")
@@ -31,7 +24,6 @@ export class TelegramBot {
     static isRuning = false
     
     static bot = new Telegraf(TOKEN)
-        .use(accesRights)
         .use(session())
         .start((ctx) => ctx.reply('Welcome'))
         .hears('id', (ctx) => {

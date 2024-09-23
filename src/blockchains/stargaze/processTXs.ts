@@ -22,7 +22,7 @@ function deleteIbcTx (sequence: string) {
     ibcMsgsBuffer = ibcMsgsBuffer.filter((msg) => msg.packet_sequence !== sequence)
 }
 
-export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: StargateClient) {
+export async function processTxsStargaze (decodedTxs: DecodedTX[], queryClient: StargateClient) {
     const telegramMsgs: FmtString[] = []
     for (const tx of decodedTxs) {
         //console.log(tx)

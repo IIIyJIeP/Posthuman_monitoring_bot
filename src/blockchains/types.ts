@@ -1,1 +1,1 @@
-export type ChainName = 'Osmosis'|'Juno'
+export type ChainName = 'Osmosis'|'Stargaze'|'Neutron'

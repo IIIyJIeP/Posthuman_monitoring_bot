@@ -1,10 +1,11 @@
 import { ChainName } from "../blockchains/types";
 
-// Simple Memmory DB. TODO: ?
+// Simple Memmory DB. TODO: sqlite
 const db = {
     "lastHeight": {
         "Osmosis":0,
-        "Juno":0
+        "Stargaze":0,
+        "Neutron":0
     }
 }
 
