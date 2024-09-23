@@ -12,12 +12,12 @@ export async function app() {
         TelegramBot.run()
 
         const osmoQueryClient = await StargateClient.connect(osmoRpcEndpoint)
-        // const starsQueryClient = await StargateClient.connect(starsRpcEndpoint)
-        // const neutronQueryClient = await StargateClient.connect(neutronRpcEndpoint)
+        const starsQueryClient = await StargateClient.connect(starsRpcEndpoint)
+        const neutronQueryClient = await StargateClient.connect(neutronRpcEndpoint)
         
         start_polling(osmoQueryClient, 'Osmosis')
-        // start_polling(starsQueryClient, 'Stargaze')
-        // start_polling(neutronQueryClient, 'Neutron')
+        start_polling(starsQueryClient, 'Stargaze')
+        start_polling(neutronQueryClient, 'Neutron')
     } catch (err) {
         console.error(err)
         setTimeout(app, 1000)

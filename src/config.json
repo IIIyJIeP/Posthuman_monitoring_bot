@@ -2,10 +2,15 @@
     "minAmountWEIRD": 0.000001,
     "minAmountWEIRDtest": 0.000001,
     "denomWEIRDosmosis": "ibc/38ADC6FFDDDB7D70B72AD0322CEA8844CB18FAA0A23400DBA8A99D43E18B3748",
-    
-
-    "daoDaoNamesURL": "https://pfpk.daodao.zone/address/",
+    "denomWEIRDstargaze": "ibc/4C52D1EC53E8B2CBF3474B7D591397B24A5D08E27871F371FE4F01654DD4A200",
+    "denomWEIRDneutron": "factory/neutron133xakkrfksq39wxy575unve2nyehg5npx75nph/WEIRD",
     "explorerTxOsmosisURL": "https://www.mintscan.io/osmosis/tx/",
+    "explorerTxStargazeURL": "https://www.mintscan.io/stargaze/tx/",
+    "stargazeBurnAddress": "stars133xakkrfksq39wxy575unve2nyehg5npka2vsp",
+    "daoDaoNamesURL": "https://pfpk.daodao.zone/address/",
+    "stakingRewardsStargazeContract": "stars1l9dk43ssyprv0wlk4qphlwdgshq4k4xu39jt237r4e3fq73a2q2qn2uere",
+
+
     "explorerTxJunoURL": "https://www.mintscan.io/juno/tx/",
     "contractPHMNJuno": "juno1rws84uz7969aaa7pej303udhlkt3j9ca0l3egpcae98jwak9quzq8szn2l",
     "contractDASHold": "juno1jktfdt5g2d0fguvy8r8pl4gly7wps8phkwy08z6upc4nazkumrwq7lj0vn",
