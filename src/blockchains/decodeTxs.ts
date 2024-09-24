@@ -12,17 +12,21 @@ export type DecodedTX = {
 
 export function decodeTxsInBlock(block: Block) {
     const decodedTxs: DecodedTX[] = []
+    
     for (const tx of block.txs) {
-        const txId = toHex(sha256(tx)).toUpperCase();
-        const dTx = decodeTxRaw(tx)
-        const memo = dTx.body.memo
-        const msgs = dTx.body.messages
-        const decodedTx:DecodedTX = {
-            txId,
-            memo,
-            msgs
-        }
-        decodedTxs.push(decodedTx)
+        try {
+            const txId = toHex(sha256(tx)).toUpperCase();
+            const dTx = decodeTxRaw(tx)
+            const memo = dTx.body.memo
+            const msgs = dTx.body.messages
+            const decodedTx:DecodedTX = {
+                txId,
+                memo,
+                msgs
+            }
+            decodedTxs.push(decodedTx)
+        
+        } catch (e) {}
     }
     return decodedTxs
 }

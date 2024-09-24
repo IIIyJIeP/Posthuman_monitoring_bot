@@ -5,7 +5,7 @@ import { fmt, link, bold, code } from 'telegraf/format'
 import { DecodedTX } from '../decodeTxs'
 import { cosmwasm, ibc } from "juno-network"
 import { minAmountWEIRD as minAmountWEIRDprod, minAmountWEIRDtest,
-    explorerTxJunoURL, contractPHMNJuno, contractDASHold, contractIbcPhmnJuno,
+    explorerTxJunoURL, contractPHMNJuno, contractDASstake, contractIbcPhmnJuno,
     contractDasPropose, dasProposalsURL, contractDasGovernance
 } from '../../config.json'
 import { getDaoDaoNickname } from '../daoDaoNames'
@@ -90,7 +90,7 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
                     // #DAS
                     } else if (
                         executeContractMsg.send &&
-                        executeContractMsg.send.contract === contractDASHold
+                        executeContractMsg.send.contract === contractDASstake
                     ) {
                         const amount = +executeContractMsg.send.amount/1e6
                         if (amount >= minAmountWEIRD) {
@@ -159,7 +159,7 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
                         }
                     }
                 // #DAS
-                } else if (msg.contract === contractDASHold) {
+                } else if (msg.contract === contractDASstake) {
                     const executeContractMsg = JSON.parse(new TextDecoder().decode(msg.msg))
                     // #DAS #Withdraw
                     if (executeContractMsg.claim) {

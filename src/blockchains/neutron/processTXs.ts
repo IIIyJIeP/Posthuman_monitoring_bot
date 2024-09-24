@@ -8,9 +8,10 @@ import { MsgSend } from '@neutron-org/neutronjs/cosmos/bank/v1beta1/tx'
 import { MsgTransfer, MsgTransferResponse } from '@neutron-org/neutronjs/ibc/applications/transfer/v1/tx'
 import { MsgAcknowledgement } from '@neutron-org/neutronjs/ibc/core/channel/v1/tx'
 import { MsgExecuteContract } from '@neutron-org/neutronjs/cosmwasm/wasm/v1/tx'
+import { MsgBurn } from '@neutron-org/neutronjs/osmosis/tokenfactory/v1beta1/tx'
 
 import { minAmountWEIRD as minAmountWEIRDprod, minAmountWEIRDtest,
-    denomWEIRDneutron, explorerTxStargazeURL, 
+    denomWEIRDneutron, explorerTxNeutronURL, contractDASstake
 } from '../../config.json'
 import { getDaoDaoNickname } from '../daoDaoNames'
 import { getIndexedTx } from '../getTx'
@@ -78,6 +79,24 @@ export async function processTxsNeutron (decodedTxs: DecodedTX[], queryClient: S
                         countMsgs++
                     }
                 }
+            } else if (msg.typeUrl === MsgBurn.typeUrl) {
+                // #Burn
+            
+                const decodedMsg = MsgBurn.decode(msg.value)
+                if (decodedMsg.amount.denom !== denomWEIRDneutron) continue;
+                const amount = Number(decodedMsg.amount.amount)/1e6
+                if (amount < minAmountWEIRD) continue;
+
+                if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                if (indexedTx.code !== 0) continue;
+                
+                const sender = decodedMsg.sender
+                const senderDaoDaoNick = await getDaoDaoNickname(sender)
+                        
+                telegramMsg = fmt(telegramMsg, '🪙  #Neutron #Burn  🔥\n', 
+                    'Address ', code(sender), senderDaoDaoNick, ' burned ', bold(amount.toString() + ' WEIRD\n')
+                )
+                countMsgs++
             } else if (msg.typeUrl === MsgTransfer.typeUrl) {
                 // #IBCtransfer
                 
@@ -108,7 +127,7 @@ export async function processTxsNeutron (decodedTxs: DecodedTX[], queryClient: S
                                 'Address ', code(sender), senderDaoDaoNick, ' sent over IBC protocol ',
                                 bold(amount.toString() + ' WEIRD'),
                                 ' to ', code(receiver), receiverDaoDaoNick, '\n',
-                                link('TX link', explorerTxStargazeURL + tx.txId)
+                                link('TX link', explorerTxNeutronURL + tx.txId)
                             )
                             if (tx.memo !== '') {
                                 telegramMsg = fmt(telegramMsg, '\n\n memo: ', tx.memo)
@@ -141,36 +160,77 @@ export async function processTxsNeutron (decodedTxs: DecodedTX[], queryClient: S
             } else if (msg.typeUrl === MsgExecuteContract.typeUrl) {
                 // #Contracts
                 
-                // const decodedMsg = MsgExecuteContract.decode(tx.msgs[i].value)
-                // if (decodedMsg.contract !== stakingRewardsStargazeContract) continue;
-                
-                // const executeContractMsg = JSON.parse(new TextDecoder().decode(decodedMsg.msg))
-                // if (!executeContractMsg.claim_staking_rewards) continue;
-                
-                // if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId);
-                // if (indexedTx.code !== 0) continue;
-                
-                // const transfer = indexedTx.events.find(evnt => 
-                //     evnt.type === 'transfer' && evnt.attributes.find(attr => attr.key === 'amount')?.value.includes(denomWEIRDstargaze)
-                // )?.attributes.find(attr => attr.key === 'amount')
-                // ?.value.replace(denomWEIRDstargaze, '')
-                // if (!transfer) continue;
-                
-                // const amount = Number(transfer)/1e6
-                // if (amount < minAmountWEIRD) continue;
+                const decodedMsg = MsgExecuteContract.decode(tx.msgs[i].value)
+                if (decodedMsg.contract === contractDASstake) {
+                    // #WEIRD_DAS
+                    if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                    if (indexedTx.code !== 0) continue
+                    
+                    const executeContractMsg = JSON.parse(new TextDecoder().decode(decodedMsg.msg))
+                    if (executeContractMsg.stake) {
+                        // #HOLD
+                        
+                        const amount = decodedMsg.funds.find(coin => coin.denom === denomWEIRDneutron)?.amount
+                        if (!amount) continue;
+                        const amountNum = Number(amount)/1e6
+                        if (amountNum < minAmountWEIRD) continue;
+                        
+                        const sender = decodedMsg.sender
+                        const senderDaoDaoNick = await getDaoDaoNickname(sender)
+                        
+                        telegramMsg = fmt(telegramMsg, '🪙  #WEIRD_DAS #HOLD  🔐\n', 
+                            'Address ', code(sender), senderDaoDaoNick, 
+                            ' just increased holdings in the DAS by ', 
+                            bold(amountNum.toString() + ' WEIRD'), '\n'
+                        )
+                        countMsgs++
+                    } else if (executeContractMsg.unstake) {
+                        // #Unlock
 
-                // const sender = decodedMsg.sender
-                // const senderDaoDaoNick = await getDaoDaoNickname(sender)
-                // telegramMsg = fmt(telegramMsg, '🪙  #Srargaze #Claim_NFT_staking_rewards  🖼\n', 
-                //     'Address ', code(sender), senderDaoDaoNick, ' has claimed NFT-staking rewards ', 
-                //     bold(amount.toString() + ' WEIRD\n')
-                // )
-                // countMsgs++
+                        const amount = +executeContractMsg.unstake.amount/1e6
+                        if (amount < minAmountWEIRD) continue;
+
+                        const sender = decodedMsg.sender
+                        const senderDaoDaoNick = await getDaoDaoNickname(sender)
+                        
+                        const claimDuration = +(indexedTx.events.find((evnt) =>
+                            evnt.type === 'wasm' &&
+                            evnt.attributes.find((atr) =>
+                                atr.key === 'claim_duration'
+                            )
+                        )?.attributes.find((atr) =>
+                            atr.key === 'claim_duration'
+                        )?.value.replace('time: ', '') || '-86400') / 86400
+
+                        telegramMsg = fmt(telegramMsg, '🪙  #WEIRD_DAS #Unlock  🔓\n',
+                            'Address ', code(sender), senderDaoDaoNick, ' requested unlock ',
+                            bold(amount.toString() + ' WEIRD'), ' from DAS. Claim duration ',
+                            claimDuration.toString(), ' days\n'
+                        )
+                        countMsgs++
+                    } else if (executeContractMsg.claim) {
+                        // #Withdraw
+
+                        const amount = +(indexedTx.events.find((ev) =>
+                            ev.type === 'wasm' &&
+                            ev.attributes.find((atr) => atr.key === '_contract_address')?.value === contractDASstake
+                        )?.attributes.find((atr) => atr.key === 'amount')?.value || '0')/1e6
+                        if (amount < minAmountWEIRD) continue;
+
+                        const sender = decodedMsg.sender
+                        const senderDaoDaoNick = await getDaoDaoNickname(sender)
+
+                        telegramMsg = fmt(telegramMsg, '🪙  #WEIRD_DAS #Withdraw  📬🪙📭\n', 
+                            'Address ', code(sender), senderDaoDaoNick, ' withdraw from the DAS ', bold(amount.toString() + ' WEIRD'), '\n'
+                        )
+                        countMsgs++
+                    }
+                }
             }
         }
         
         if (countMsgs > 0) {
-            telegramMsg = fmt(telegramMsg, link('TX link', explorerTxStargazeURL + tx.txId))
+            telegramMsg = fmt(telegramMsg, link('TX link', explorerTxNeutronURL + tx.txId))
             if (tx.memo !== '') {
                 telegramMsg = fmt(telegramMsg, '\n\n memo: ', tx.memo)
             }

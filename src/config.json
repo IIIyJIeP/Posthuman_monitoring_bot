@@ -6,14 +6,18 @@
     "denomWEIRDneutron": "factory/neutron133xakkrfksq39wxy575unve2nyehg5npx75nph/WEIRD",
     "explorerTxOsmosisURL": "https://www.mintscan.io/osmosis/tx/",
     "explorerTxStargazeURL": "https://www.mintscan.io/stargaze/tx/",
+    "explorerTxNeutronURL": "https://www.mintscan.io/neutron/tx/",
     "stargazeBurnAddress": "stars133xakkrfksq39wxy575unve2nyehg5npka2vsp",
     "daoDaoNamesURL": "https://pfpk.daodao.zone/address/",
     "stakingRewardsStargazeContract": "stars1l9dk43ssyprv0wlk4qphlwdgshq4k4xu39jt237r4e3fq73a2q2qn2uere",
+    "contractDASstake": "neutron1zhatgqzsmxsf8a8e4wgvyrmsr7lmv58q8cmy8t6faf9z9mkulu6sgcc8jq",
+    
+
+
 
 
     "explorerTxJunoURL": "https://www.mintscan.io/juno/tx/",
     "contractPHMNJuno": "juno1rws84uz7969aaa7pej303udhlkt3j9ca0l3egpcae98jwak9quzq8szn2l",
-    "contractDASHold": "juno1jktfdt5g2d0fguvy8r8pl4gly7wps8phkwy08z6upc4nazkumrwq7lj0vn",
     "contractIbcPhmnJuno": "juno1v4887y83d6g28puzvt8cl0f3cdhd3y6y9mpysnsp3k8krdm7l6jqgm0rkn",
     "contractDasPropose": "juno169m5zgfxnquukj2cgrkgxq4gsuw9ee7pjez4g9g4mkvafzkums6q5632mp",
     "dasProposalsURL": "https://dao.daodao.zone/juno1h5ex5dn62arjwvwkh88r475dap8qppmmec4sgxzmtdn5tnmke3lqwpplgg/proposals",
