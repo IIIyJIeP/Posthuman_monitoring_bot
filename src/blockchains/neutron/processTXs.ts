@@ -178,10 +178,10 @@ export async function processTxsNeutron (decodedTxs: DecodedTX[], queryClient: S
                         const sender = decodedMsg.sender
                         const senderDaoDaoNick = await getDaoDaoNickname(sender)
                         
-                        telegramMsg = fmt(telegramMsg, '🪙  #WEIRD_DAS #HOLD  🔐\n', 
+                        telegramMsg = fmt(telegramMsg, '🪙  #Neutron #WEIRD_DAS #Stake  🔐\n', 
                             'Address ', code(sender), senderDaoDaoNick, 
-                            ' just increased holdings in the DAS by ', 
-                            bold(amountNum.toString() + ' WEIRD'), '\n'
+                            ' staked ', 
+                            bold(amountNum.toString() + ' WEIRD'), ' in WEIRD DAS\n'
                         )
                         countMsgs++
                     } else if (executeContractMsg.unstake) {
