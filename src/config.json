@@ -11,23 +11,6 @@
     "daoDaoNamesURL": "https://pfpk.daodao.zone/address/",
     "stakingRewardsStargazeContract": "stars1l9dk43ssyprv0wlk4qphlwdgshq4k4xu39jt237r4e3fq73a2q2qn2uere",
     "contractDASstake": "neutron1zhatgqzsmxsf8a8e4wgvyrmsr7lmv58q8cmy8t6faf9z9mkulu6sgcc8jq",
-    
-
-
-
-
-    "explorerTxJunoURL": "https://www.mintscan.io/juno/tx/",
-    "contractPHMNJuno": "juno1rws84uz7969aaa7pej303udhlkt3j9ca0l3egpcae98jwak9quzq8szn2l",
-    "contractIbcPhmnJuno": "juno1v4887y83d6g28puzvt8cl0f3cdhd3y6y9mpysnsp3k8krdm7l6jqgm0rkn",
-    "contractDasPropose": "juno169m5zgfxnquukj2cgrkgxq4gsuw9ee7pjez4g9g4mkvafzkums6q5632mp",
-    "dasProposalsURL": "https://dao.daodao.zone/juno1h5ex5dn62arjwvwkh88r475dap8qppmmec4sgxzmtdn5tnmke3lqwpplgg/proposals",
-    "contractDasGovernance": "juno1mf3wshvp2vr7kuqrjk4le33l4seeltwara9nm3m2xt8kckg7kekset6njw",
-    "dasTreasuryAddress": "juno1h5ex5dn62arjwvwkh88r475dap8qppmmec4sgxzmtdn5tnmke3lqwpplgg",
-    
-    
-
-
-    
     "poolsWEIRDosmosis": [
         {
             "poolId": 1776,
