@@ -5,7 +5,7 @@ import { fmt, link, bold, code, FmtString } from 'telegraf/format'
 import { osmosis , ibc } from 'osmojs'
 import { getDaoDaoNickname } from '../daoDaoNames'
 import { minAmountWEIRD as minAmountWEIRDprod, minAmountWEIRDtest, 
-    explorerTxOsmosisURL, denomWEIRDosmosis, contractPHMNJuno, contractIbcPhmnJuno } from '../../config.json'
+    explorerTxOsmosisURL, denomWEIRDosmosis } from '../../config.json'
 import { isWeirdPool, getPoolInfo } from './poolInfo'
 import { Registry } from "@cosmjs/proto-signing"
 import { MsgSend } from 'osmojs/dist/codegen/cosmos/bank/v1beta1/tx'

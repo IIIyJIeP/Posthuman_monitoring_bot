@@ -58,11 +58,11 @@ export async function processTxsStargaze (decodedTxs: DecodedTX[], queryClient: 
                                 getDaoDaoNickname(toAddress)
                             ]) 
                             if(toAddress === stargazeBurnAddress) {
-                                telegramMsg = fmt(telegramMsg, '🪙  #Srargaze #Burn  🔥\n', 
+                                telegramMsg = fmt(telegramMsg, '🪙  #Stargaze #Burn  🔥\n', 
                                     'Address ', code(sender), senderDaoDaoNick, ' burned ', bold(amount.toString() + ' WEIRD\n')
                                 )
                             } else {
-                                telegramMsg = fmt(telegramMsg, '🪙  #Srargaze #Send  📬\n', 
+                                telegramMsg = fmt(telegramMsg, '🪙  #Stargaze #Send  📬\n', 
                                     'Address ', code(sender), senderDaoDaoNick, ' sent ', bold(amount.toString() + ' WEIRD'), ' to ', code(toAddress), toAddressDaoDaoNick, '\n'
                                 )
                             }
@@ -174,7 +174,7 @@ export async function processTxsStargaze (decodedTxs: DecodedTX[], queryClient: 
 
                 const sender = decodedMsg.sender
                 const senderDaoDaoNick = await getDaoDaoNickname(sender)
-                telegramMsg = fmt(telegramMsg, '🪙  #Srargaze #Claim_NFT_staking_rewards  🖼\n', 
+                telegramMsg = fmt(telegramMsg, '🪙  #Stargaze #Claim_NFT_staking_rewards  🖼\n', 
                     'Address ', code(sender), senderDaoDaoNick, ' has claimed NFT-staking rewards ', 
                     bold(amount.toString() + ' WEIRD\n')
                 )
