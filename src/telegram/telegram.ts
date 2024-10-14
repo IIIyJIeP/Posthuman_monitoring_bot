@@ -3,7 +3,10 @@ import { Telegraf, Context, session } from 'telegraf'
 import { FmtString } from 'telegraf/format'
 
 if (!process.env.TELEGRAM_BOT_TOKEN) throw new Error('"TELEGRAM_BOT_TOKEN" env var is required!');
-const TOKEN = process.env.TELEGRAM_BOT_TOKEN
+if (!process.env.TEST_TG_BOT_TOKEN) throw new Error('"TEST_TG_BOT_TOKEN" env var is required!');
+if (!process.env.DEPLOYMENT) throw new Error('"DEPLOYMENT" env var is required!');
+const TOKEN = process.env.DEPLOYMENT === 'production' ? process.env.TELEGRAM_BOT_TOKEN : process.env.TEST_TG_BOT_TOKEN
+
 if (!process.env.TELEGRAM_ADMIN_ID) throw new Error('"TELEGRAM_ADMIN_ID" env var is required!');
 const ADMIN = +process.env.TELEGRAM_ADMIN_ID
 if (!process.env.WEIRD_CHAT_ID) throw new Error('"WEIRD_CHAT_ID" env var is required!')
