@@ -33,12 +33,12 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
         
         for (let i = 0; i < tx.msgs.length; i++) {
             const msg = tx.msgs[i]
-            // #SplitRouteSwap
             if (msg.typeUrl === '/osmosis.poolmanager.v1beta1.MsgSplitRouteSwapExactAmountIn') {
-                // #Buy
+                // #SplitRouteSwap
                 const decodedMsg = osmosis.poolmanager.v1beta1.MsgSplitRouteSwapExactAmountIn.decode(msg.value)
                 const route0pools = decodedMsg.routes[0].pools
                 if (route0pools[route0pools.length - 1].tokenOutDenom === denomPHMNosmosis) {
+                    // #Buy
                     if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
                     if (indexedTx.code === 0) {
                         const amount = +osmosis.poolmanager.v1beta1.MsgSplitRouteSwapExactAmountInResponse
@@ -55,8 +55,8 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
                             countMsgs++
                         }
                     }
-                // #Sell
                 } else if (decodedMsg.tokenInDenom === denomPHMNosmosis) {
+                    // #Sell
                     let amount = 0
                     for (const route of decodedMsg.routes) {
                         amount += +route.tokenInAmount
@@ -76,11 +76,54 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
                         }
                     }
                 }
-            // #Swap
+            } else if (msg.typeUrl === '/osmosis.poolmanager.v1beta1.MsgSplitRouteSwapExactAmountOut') {
+                // #SplitRouteSwap
+                const decodedMsg = osmosis.poolmanager.v1beta1.MsgSplitRouteSwapExactAmountOut.decode(msg.value)
+                const route0pools = decodedMsg.routes[0].pools
+                if (route0pools[0].tokenInDenom === denomPHMNosmosis) {
+                    // #Sell
+                    if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                    if (indexedTx.code === 0) {
+                        const amount = +osmosis.poolmanager.v1beta1.MsgSplitRouteSwapExactAmountOutResponse
+                            .decode(indexedTx.msgResponses[i].value)
+                            .tokenInAmount/1e6
+                        if (amount >= minAmountPHMN) {
+                            const sender = decodedMsg.sender
+                            const nickNameDAODAO = await getDaoDaoNickname(sender)
+                            
+                            telegramMsg = fmt(telegramMsg, '🐳  #Osmosis #Swap #Sell  🪙📤💸\n', 
+                                'Address ', code(sender), nickNameDAODAO, ' sold ', bold(amount.toString() + ' PHMN'), '\n'
+                            )
+                            
+                            countMsgs++
+                        }
+                    }
+                } else if (decodedMsg.tokenOutDenom === denomPHMNosmosis) {
+                    // #Buy
+                    let amount = 0
+                    for (const route of decodedMsg.routes) {
+                        amount += +route.tokenOutAmount
+                    }
+                    amount /= 1e6
+                    if (amount >= minAmountPHMN) {
+                        if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                        if (indexedTx.code === 0) {
+                            const sender = decodedMsg.sender
+                            const nickNameDAODAO = await getDaoDaoNickname(sender)
+                            
+                            telegramMsg = fmt(telegramMsg, '🐳  #Osmosis #Swap #Buy  💸📥🪙\n', 
+                                'Address ', code(sender), nickNameDAODAO, ' bought ', bold(amount.toString() + ' PHMN'), '\n'
+                            )
+                            
+                            countMsgs++
+                        }
+                    }
+                }
             } else if (msg.typeUrl === '/osmosis.poolmanager.v1beta1.MsgSwapExactAmountIn') {
+                // #Swap
                 const decodedMsg = osmosis.poolmanager.v1beta1.MsgSwapExactAmountIn.decode(msg.value)
-                // #Sell
                 if (decodedMsg.tokenIn.denom === denomPHMNosmosis) {
+                    // #Sell
                     const amount = +decodedMsg.tokenIn.amount/1000000
                     if (amount >= minAmountPHMN) {
                         if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
@@ -95,8 +138,8 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
                             countMsgs++
                         }
                     }
-                // #Buy
                 } else if (decodedMsg.routes[decodedMsg.routes.length - 1].tokenOutDenom === denomPHMNosmosis) {
+                    // #Buy
                     if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
                     if (indexedTx.code === 0) {
                         const amount = +osmosis.poolmanager.v1beta1.MsgSwapExactAmountInResponse
@@ -114,8 +157,46 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
                         }
                     }
                 }
-            // #Send
+            } else if (msg.typeUrl === '/osmosis.poolmanager.v1beta1.MsgSwapExactAmountOut') {
+                // #Swap
+                const decodedMsg = osmosis.poolmanager.v1beta1.MsgSwapExactAmountOut.decode(msg.value)
+                if (decodedMsg.tokenOut.denom === denomPHMNosmosis) {
+                    // #Buy
+                    const amount = +decodedMsg.tokenOut.amount/1e6
+                    if (amount >= minAmountPHMN) {
+                        if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                        if (indexedTx.code === 0) {
+                            const sender = decodedMsg.sender
+                            const nickNameDAODAO = await getDaoDaoNickname(sender)
+                            
+                            telegramMsg = fmt(telegramMsg, '🐳  #Osmosis #Swap #Buy  💸📥🪙\n', 
+                                'Address ', code(sender), nickNameDAODAO, ' bought ', bold(amount.toString() + ' PHMN'), '\n'
+                            )
+                            
+                            countMsgs++
+                        }
+                    }
+                } else if (decodedMsg.routes[0].tokenInDenom === denomPHMNosmosis) {
+                    // #Sell
+                    if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                    if (indexedTx.code === 0) {
+                        const amount = +osmosis.poolmanager.v1beta1.MsgSwapExactAmountOutResponse
+                            .decode(indexedTx.msgResponses[i].value)
+                            .tokenInAmount/1e6
+                        if (amount >= minAmountPHMN) {
+                            const sender = decodedMsg.sender
+                            const nickNameDAODAO = await getDaoDaoNickname(sender)
+                            
+                            telegramMsg = fmt(telegramMsg, '🐳  #Osmosis #Swap #Sell  🪙📤💸\n', 
+                                'Address ', code(sender), nickNameDAODAO, ' sold ', bold(amount.toString() + ' PHMN'), '\n'
+                            )
+                            
+                            countMsgs++
+                        }
+                    }
+                }
             } else if (msg.typeUrl === '/cosmos.bank.v1beta1.MsgSend') {
+                // #Send
                 const decodedMsg = registry.decode(msg) as MsgSend
                 const denom = denomPHMNosmosis
                 let amount = 0
