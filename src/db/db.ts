@@ -5,7 +5,8 @@ const db = {
     "lastHeight": {
         "Osmosis":0,
         "Stargaze":0,
-        "Neutron":0
+        "Neutron":0,
+        "Injective":0
     }
 }
 

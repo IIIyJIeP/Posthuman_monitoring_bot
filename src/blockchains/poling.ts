@@ -6,17 +6,21 @@ import { processTxsOsmosis } from './osmosis/processTXs'
 import { TelegramBot } from '../telegram/telegram';
 import { processTxsStargaze } from './stargaze/processTXs'
 import { processTxsNeutron } from './neutron/processTXs'
+import { processTxsInjective } from './injective/processTXs'
+import { fmt } from 'telegraf/format'
 
 const DEPLOYMENT = process.env.DEPLOYMENT
 const sendMsg =  DEPLOYMENT === 'production'? 
     TelegramBot.sendMsgToChannel
 : TelegramBot.sendServiceInformation
 
+let lastServiceMsgTime = 0
+
 export async function start_polling(queryClient: StargateClient, chainName: ChainName) {
     try {
         let height = getLastHeight(chainName)
         const currentHeight = await queryClient.getHeight()
-        if (height === 0) height = currentHeight - 1
+        if (currentHeight - height > 100) height = currentHeight - 1
         
         if (currentHeight > height) {
             height++
@@ -33,6 +37,7 @@ export async function start_polling(queryClient: StargateClient, chainName: Chai
             chainName === 'Stargaze' ? await processTxsStargaze(decodedTxs, queryClient)
             : chainName === 'Neutron' ? await processTxsNeutron(decodedTxs, queryClient)
             : chainName === 'Osmosis' ? await processTxsOsmosis(decodedTxs, queryClient)
+            : chainName === 'Injective' ? await processTxsInjective(decodedTxs, queryClient)
         : []
         
         for (const msg of telegramMsgs) {
@@ -45,5 +50,10 @@ export async function start_polling(queryClient: StargateClient, chainName: Chai
     } catch (err) {
         setTimeout(start_polling, 1 * 1000, queryClient, chainName)
         console.error(err)
+        const time = Date.now()
+        if (time - lastServiceMsgTime > 10 * 60 * 1000) {
+            await TelegramBot.sendServiceInformation(fmt(String(err)))
+            lastServiceMsgTime = time
+        }
     }
 }
