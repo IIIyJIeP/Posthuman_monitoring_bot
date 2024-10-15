@@ -52,7 +52,7 @@ export async function start_polling(queryClient: StargateClient, chainName: Chai
         console.error(err)
         const time = Date.now()
         if (time - lastServiceMsgTime > 10 * 60 * 1000) {
-            await TelegramBot.sendServiceInformation(fmt(String(err)))
+            await TelegramBot.sendServiceInformation(fmt(String(err), chainName))
             lastServiceMsgTime = time
         }
     }
