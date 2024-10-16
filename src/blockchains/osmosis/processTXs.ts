@@ -2,10 +2,11 @@ import 'dotenv/config'
 import { IndexedTx, StargateClient, defaultRegistryTypes } from '@cosmjs/stargate'
 import { DecodedTX } from '../decodeTxs'
 import { fmt, link, bold, code, FmtString } from 'telegraf/format'
-import { osmosis , ibc } from 'osmojs'
+import { osmosis , ibc, cosmwasm } from 'osmojs'
 import { getDaoDaoNickname } from '../daoDaoNames'
 import { minAmountPHMN as minAmountPHMNprod, minAmountPHMNtest, 
-    explorerTxOsmosisURL, denomPHMNosmosis, contractPHMNJuno, contractIbcPhmnJuno } from '../../config.json'
+    explorerTxOsmosisURL, denomPHMNosmosis, contractPHMNJuno, 
+    contractIbcPhmnJuno, contractSkipSwap } from '../../config.json'
 import { isPHMNpool, getPoolInfo } from './poolInfo'
 import { Registry } from "@cosmjs/proto-signing"
 import { MsgSend } from 'osmojs/dist/codegen/cosmos/bank/v1beta1/tx'
@@ -386,6 +387,58 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
                             }
                         }
                     }
+                }
+            } else if (msg.typeUrl === '/cosmwasm.wasm.v1.MsgExecuteContract') {
+                // #SkipSwap
+                const decodedMsg = cosmwasm.wasm.v1.MsgExecuteContract.decode(msg.value)
+                if (decodedMsg.contract !== contractSkipSwap) continue;
+                const phmnInFunds = decodedMsg.funds.find(coin => coin.denom === denomPHMNosmosis)
+                if (phmnInFunds) {
+                    // #Sell
+                    const amount = +phmnInFunds.amount/1e6
+                    if (amount < minAmountPHMN) continue;
+                    if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                    if (indexedTx.code !== 0) continue;
+                    const sender = decodedMsg.sender
+                    const nickNameDAODAO = await getDaoDaoNickname(sender)
+                    
+                    telegramMsg = fmt(telegramMsg, '🪙  #SkipSwap #Sell  🪙📤💸\n', 
+                        'Address ', code(sender), nickNameDAODAO, ' sold ', bold(amount.toString() + ' PHMN'), '\n'
+                    )
+                    
+                    countMsgs++
+                } else { 
+                    // #Buy
+                    const contractMsg = JSON.parse(new TextDecoder().decode(decodedMsg.msg)) as {
+                        swap_and_action?: {
+                            min_asset?: {
+                                native?: {
+                                    denom: string,
+                                    amount: string
+                                }
+                            }
+                        }
+                    }
+                    if (contractMsg.swap_and_action?.min_asset?.native?.denom !== denomPHMNosmosis) continue;
+                    if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                    if (indexedTx.code !== 0) continue;
+                    const amount = +(indexedTx.events.find (
+                        ev => ev.type === 'token_swapped' && ev.attributes.find(
+                            attr => attr.key === 'tokens_out'
+                        )?.value.includes(denomPHMNosmosis)
+                    )?.attributes.find(
+                        attr => attr.key === 'tokens_out'
+                    )?.value.replace(denomPHMNosmosis, '') || '0')/1e6
+                    if (amount < minAmountPHMN) continue;
+                    
+                    const sender = decodedMsg.sender
+                    const nickNameDAODAO = await getDaoDaoNickname(sender)
+                    
+                    telegramMsg = fmt(telegramMsg, '🪙  #SkipSwap #Buy  💸📥🪙\n', 
+                        'Address ', code(sender), nickNameDAODAO, ' bought ', bold(amount.toString() + ' PHMN'), '\n'
+                    )
+                    
+                    countMsgs++
                 }
             }
         }
