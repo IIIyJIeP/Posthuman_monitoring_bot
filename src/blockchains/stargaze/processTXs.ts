@@ -181,7 +181,8 @@ export async function processTxsStargaze (decodedTxs: DecodedTX[], queryClient: 
                 } else if (decodedMsg.contract === darkShadowsSubDaoRewardsContract) {
                     // #Claim_Dark_Shadows_SubDAO_rewards
                     const executeContractMsg = JSON.parse(new TextDecoder().decode(decodedMsg.msg))
-                    if (!executeContractMsg.claim) continue;
+                    if (!executeContractMsg.claim?.id) continue;
+                    const id: number = executeContractMsg.claim?.id
                     
                     if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId);
                     if (indexedTx.code !== 0) continue;
@@ -189,7 +190,8 @@ export async function processTxsStargaze (decodedTxs: DecodedTX[], queryClient: 
                     const claimAmount = indexedTx.events.find(evnt => 
                         evnt.type === 'wasm' && 
                         evnt.attributes.find(attr => attr.key === 'action')?.value === 'claim' &&
-                        evnt.attributes.find(attr => attr.key === 'denom')?.value === denomWEIRDstargaze
+                        evnt.attributes.find(attr => attr.key === 'denom')?.value === denomWEIRDstargaze &&
+                        evnt.attributes.find(attr => attr.key === 'id')?.value === id.toString()
                     )?.attributes.find(attr => attr.key === 'amount_claimed')?.value
                     if (!claimAmount) continue;
                     
