@@ -14,6 +14,7 @@
     "stakingRewardsStargazeContract": "stars1l9dk43ssyprv0wlk4qphlwdgshq4k4xu39jt237r4e3fq73a2q2qn2uere",
     "stakingRewardsInjectiveContract": "inj1gwsuksg40agjq8wsh5t9s7dx5kv6pyyye9hrmj",
     "contractDASstake": "neutron1zhatgqzsmxsf8a8e4wgvyrmsr7lmv58q8cmy8t6faf9z9mkulu6sgcc8jq",
+    "darkShadowsSubDaoRewardsContract": "stars1tjkcfr4f5qccxz80grv0j5jh69m56vvmn64c9h2nrdylk3cmys6qdk9j36",
     "poolsWEIRDosmosis": [
         {
             "poolId": 1776,

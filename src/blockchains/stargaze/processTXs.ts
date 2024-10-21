@@ -6,7 +6,7 @@ import { DecodedTX } from '../decodeTxs'
 import { cosmwasm, ibc, cosmos } from "stargazejs"
 import { minAmountWEIRD as minAmountWEIRDprod, minAmountWEIRDtest,
     denomWEIRDstargaze, explorerTxStargazeURL, stargazeBurnAddress,
-    stakingRewardsStargazeContract,
+    stakingRewardsStargazeContract, darkShadowsSubDaoRewardsContract
 } from '../../config.json'
 import { getDaoDaoNickname } from '../daoDaoNames'
 import { getIndexedTx } from '../getTx'
@@ -152,33 +152,58 @@ export async function processTxsStargaze (decodedTxs: DecodedTX[], queryClient: 
                     }
                 }
             } else if (msg.typeUrl === '/cosmwasm.wasm.v1.MsgExecuteContract') {
-                // #Claim_NFT_staking_rewards
-                
+                // ExecuteContract
                 const decodedMsg = cosmwasm.wasm.v1.MsgExecuteContract.decode(tx.msgs[i].value)
-                if (decodedMsg.contract !== stakingRewardsStargazeContract) continue;
-                
-                const executeContractMsg = JSON.parse(new TextDecoder().decode(decodedMsg.msg))
-                if (!executeContractMsg.claim_staking_rewards) continue;
-                
-                if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId);
-                if (indexedTx.code !== 0) continue;
-                
-                const transfer = indexedTx.events.find(evnt => 
-                    evnt.type === 'transfer' && evnt.attributes.find(attr => attr.key === 'amount')?.value.includes(denomWEIRDstargaze)
-                )?.attributes.find(attr => attr.key === 'amount')
-                ?.value.replace(denomWEIRDstargaze, '')
-                if (!transfer) continue;
-                
-                const amount = Number(transfer)/1e6
-                if (amount < minAmountWEIRD) continue;
+                if (decodedMsg.contract === stakingRewardsStargazeContract) {
+                    // #Claim_NFT_staking_rewards
+                    const executeContractMsg = JSON.parse(new TextDecoder().decode(decodedMsg.msg))
+                    if (!executeContractMsg.claim_staking_rewards) continue;
+                    
+                    if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId);
+                    if (indexedTx.code !== 0) continue;
+                    
+                    const transfer = indexedTx.events.find(evnt => 
+                        evnt.type === 'transfer' && evnt.attributes.find(attr => attr.key === 'amount')?.value.includes(denomWEIRDstargaze)
+                    )?.attributes.find(attr => attr.key === 'amount')
+                    ?.value.replace(denomWEIRDstargaze, '')
+                    if (!transfer) continue;
+                    
+                    const amount = Number(transfer)/1e6
+                    if (amount < minAmountWEIRD) continue;
 
-                const sender = decodedMsg.sender
-                const senderDaoDaoNick = await getDaoDaoNickname(sender)
-                telegramMsg = fmt(telegramMsg, '🪙  #Stargaze #Claim_NFT_staking_rewards  🖼\n', 
-                    'Address ', code(sender), senderDaoDaoNick, ' has claimed NFT-staking rewards ', 
-                    bold(amount.toString() + ' WEIRD\n')
-                )
-                countMsgs++
+                    const sender = decodedMsg.sender
+                    const senderDaoDaoNick = await getDaoDaoNickname(sender)
+                    telegramMsg = fmt(telegramMsg, '🪙  #Stargaze #Claim_NFT_staking_rewards  🖼\n', 
+                        'Address ', code(sender), senderDaoDaoNick, ' has claimed NFT-staking rewards ', 
+                        bold(amount.toString() + ' WEIRD\n')
+                    )
+                    countMsgs++
+                } else if (decodedMsg.contract === darkShadowsSubDaoRewardsContract) {
+                    // #Claim_Dark_Shadows_SubDAO_rewards
+                    const executeContractMsg = JSON.parse(new TextDecoder().decode(decodedMsg.msg))
+                    if (!executeContractMsg.claim) continue;
+                    
+                    if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId);
+                    if (indexedTx.code !== 0) continue;
+                    
+                    const claimAmount = indexedTx.events.find(evnt => 
+                        evnt.type === 'wasm' && 
+                        evnt.attributes.find(attr => attr.key === 'action')?.value === 'claim' &&
+                        evnt.attributes.find(attr => attr.key === 'denom')?.value === denomWEIRDstargaze
+                    )?.attributes.find(attr => attr.key === 'amount_claimed')?.value
+                    if (!claimAmount) continue;
+                    
+                    const amount = Number(claimAmount)/1e6
+                    if (amount < minAmountWEIRD) continue;
+
+                    const sender = decodedMsg.sender
+                    const senderDaoDaoNick = await getDaoDaoNickname(sender)
+                    telegramMsg = fmt(telegramMsg, '🪙  #Stargaze #Dark_Shadows_SubDAO #Claim_rewards\n', 
+                        'Address ', code(sender), senderDaoDaoNick, ' has claimed Dark Shadows SubDAO rewards ', 
+                        bold(amount.toString() + ' WEIRD\n')
+                    )
+                    countMsgs++
+                } 
             }
         }
         
