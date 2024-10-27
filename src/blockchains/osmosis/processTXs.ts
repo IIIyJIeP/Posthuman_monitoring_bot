@@ -34,6 +34,7 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
         
         for (let i = 0; i < tx.msgs.length; i++) {
             const msg = tx.msgs[i]
+            if (countMsgs >19) continue;
             if (msg.typeUrl === '/osmosis.poolmanager.v1beta1.MsgSplitRouteSwapExactAmountIn') {
                 // #SplitRouteSwap
                 const decodedMsg = osmosis.poolmanager.v1beta1.MsgSplitRouteSwapExactAmountIn.decode(msg.value)

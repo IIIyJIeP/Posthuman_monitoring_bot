@@ -31,6 +31,7 @@ export async function processTxsStargaze (decodedTxs: DecodedTX[], queryClient: 
         let indexedTx: IndexedTx | null = null
         
         for (let i = 0; i < tx.msgs.length; i++) {
+            if (countMsgs >19) continue;
             const msg = tx.msgs[i]
             if (msg.typeUrl === '/cosmos.bank.v1beta1.MsgSend') {
                 // #Send

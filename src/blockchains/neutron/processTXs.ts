@@ -36,6 +36,7 @@ export async function processTxsNeutron (decodedTxs: DecodedTX[], queryClient: S
         let indexedTx: IndexedTx | null = null
         
         for (let i = 0; i < tx.msgs.length; i++) {
+            if (countMsgs >19) continue;
             const msg = tx.msgs[i]
             if (msg.typeUrl === MsgSend.typeUrl) {
                 // #Send
