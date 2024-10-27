@@ -20,7 +20,7 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
         
         for (let i = 0; i < tx.msgs.length; i++) {
             const msg = tx.msgs[i]
-            if (msg.typeUrl === '/cosmos.bank.v1beta1.MsgSend' && countMsgs < 10) {
+            if (msg.typeUrl === '/cosmos.bank.v1beta1.MsgSend' && countMsgs < 20) {
                 // Send
 
                 const decodedMsg = registry.decode(msg) as MsgSend
