@@ -31,7 +31,6 @@ export class TelegramBot {
     static isRuning = false
     
     static bot = new Telegraf(TOKEN)
-        .use(accesRights)
         .use(session())
         .start((ctx) => ctx.reply('Welcome'))
         .hears('id', (ctx) => {
