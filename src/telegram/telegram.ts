@@ -41,6 +41,9 @@ export class TelegramBot {
                 '\nUser Id: ' + ctx.from.id.toString()
             )
         })
+        .command('roll', (ctx) => {
+            return ctx.reply(Math.floor(Math.random() * 101).toString())
+        })
         
     static run = () => {
         if(!this.isRuning) {
