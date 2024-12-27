@@ -135,6 +135,10 @@
         {
             "subdaoTag": "AISubDAO",
             "treasuryAddress": "juno1l00nplvtnucaud94fs9y5mmckmrpc5d96kpdm8kxwrpkzhlmhxjq07x3w3"
+        },
+        {
+            "subdaoTag": "IncentiveSubDAO",
+            "treasuryAddress": "juno19hxxc04rvmn4nj5tvd7h63fsmzaxj6gk3ss2wxtsgg97k54ylzysp0evep"
         }
     ]
 }
