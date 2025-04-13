@@ -8,6 +8,7 @@
     "explorerTxOsmosisURL": "https://www.mintscan.io/osmosis/tx/",
     "explorerTxStargazeURL": "https://www.mintscan.io/stargaze/tx/",
     "explorerTxNeutronURL": "https://www.mintscan.io/neutron/tx/",
+    "explorerTxJunoURL": "https://explorer.chainroot.io/juno/transactions/",
     "explorerTxInjective": "https://www.mintscan.io/injective/tx/",
     "stargazeBurnAddress": "stars133xakkrfksq39wxy575unve2nyehg5npka2vsp",
     "daoDaoNamesURL": "https://pfpk.daodao.zone/address/",
@@ -15,6 +16,8 @@
     "stakingRewardsInjectiveContract": "inj1gwsuksg40agjq8wsh5t9s7dx5kv6pyyye9hrmj",
     "contractDASstake": "neutron1zhatgqzsmxsf8a8e4wgvyrmsr7lmv58q8cmy8t6faf9z9mkulu6sgcc8jq",
     "darkShadowsSubDaoRewardsContract": "stars1tjkcfr4f5qccxz80grv0j5jh69m56vvmn64c9h2nrdylk3cmys6qdk9j36",
+    "contractWFDAOgov": "juno1p5yuzax37tly465g8vpzxxd5fnt5sarnrnvqfquk3nhx7ht7gg7sa9xy8f",
+    "contractWeirdDAS": "neutron10qpwaryxaaqfvawc0jqpggkzf0h5fls29satwks4lw2v5w393qzs8wyvkq",
     "poolsWEIRDosmosis": [
         {
             "poolId": 1776,
@@ -139,6 +142,10 @@
         {
             "subdaoTag": "IncentiveSubDAO",
             "treasuryAddress": "juno19hxxc04rvmn4nj5tvd7h63fsmzaxj6gk3ss2wxtsgg97k54ylzysp0evep"
+        },
+        {
+            "subdaoTag": "Weird_DAS_Neutron",
+            "treasuryAddress": "neutron10qpwaryxaaqfvawc0jqpggkzf0h5fls29satwks4lw2v5w393qzs8wyvkq"
         }
     ]
 }
