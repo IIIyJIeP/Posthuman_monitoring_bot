@@ -7,7 +7,7 @@ import { minAmount, explorerTxOsmosisURL, denomLEGosmosis, contractLegendDAO } f
 import { Registry } from "@cosmjs/proto-signing"
 import { MsgSend } from 'osmojs/dist/codegen/cosmos/bank/v1beta1/tx'
 import { getIndexedTx } from '../getTx'
-import { cosmwasm } from 'osmojs'
+import { cosmwasm, osmosis } from 'osmojs'
 
 const registry = new Registry(defaultRegistryTypes)
 
@@ -20,7 +20,169 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
         
         for (let i = 0; i < tx.msgs.length; i++) {
             const msg = tx.msgs[i]
-            if (msg.typeUrl === '/cosmos.bank.v1beta1.MsgSend' && countMsgs < 20) {
+            if (msg.typeUrl === '/osmosis.poolmanager.v1beta1.MsgSplitRouteSwapExactAmountIn') {
+                // #SplitRouteSwap
+                const decodedMsg = osmosis.poolmanager.v1beta1.MsgSplitRouteSwapExactAmountIn.decode(msg.value)
+                const route0pools = decodedMsg.routes[0].pools
+                if (route0pools[route0pools.length - 1].tokenOutDenom === denomLEGosmosis) {
+                    // #Buy
+                    if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                    if (indexedTx.code === 0) {
+                        const amount = +osmosis.poolmanager.v1beta1.MsgSplitRouteSwapExactAmountInResponse
+                            .decode(indexedTx.msgResponses[i].value)
+                            .tokenOutAmount/1000000
+                        if (amount >= minAmount) {
+                            const sender = decodedMsg.sender
+                            const nickNameDAODAO = await getDaoDaoNickname(sender)
+                            
+                            telegramMsg = fmt(telegramMsg, '💱  #Osmosis #Swap #Buy  💸📥🪙\n', 
+                                'Address ', code(sender), nickNameDAODAO, ' bought ', bold(amount.toString() + ' LEG'), '\n'
+                            )
+                            
+                            countMsgs++
+                        }
+                    }
+                } else if (decodedMsg.tokenInDenom === denomLEGosmosis) {
+                    // #Sell
+                    let amount = 0
+                    for (const route of decodedMsg.routes) {
+                        amount += +route.tokenInAmount
+                    }
+                    amount /= 1e6
+                    if (amount >= minAmount) {
+                        if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                        if (indexedTx.code === 0) {
+                            const sender = decodedMsg.sender
+                            const nickNameDAODAO = await getDaoDaoNickname(sender)
+                            
+                            telegramMsg = fmt(telegramMsg, '💱  #Osmosis #Swap #Sell  🪙📤💸\n', 
+                                'Address ', code(sender), nickNameDAODAO, ' sold ', bold(amount.toString() + ' LEG'), '\n'
+                            )
+                            
+                            countMsgs++
+                        }
+                    }
+                }
+            } else if (msg.typeUrl === '/osmosis.poolmanager.v1beta1.MsgSplitRouteSwapExactAmountOut') {
+                // #SplitRouteSwap
+                const decodedMsg = osmosis.poolmanager.v1beta1.MsgSplitRouteSwapExactAmountOut.decode(msg.value)
+                const route0pools = decodedMsg.routes[0].pools
+                if (route0pools[0].tokenInDenom === denomLEGosmosis) {
+                    // #Sell
+                    if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                    if (indexedTx.code === 0) {
+                        const amount = +osmosis.poolmanager.v1beta1.MsgSplitRouteSwapExactAmountOutResponse
+                            .decode(indexedTx.msgResponses[i].value)
+                            .tokenInAmount/1e6
+                        if (amount >= minAmount) {
+                            const sender = decodedMsg.sender
+                            const nickNameDAODAO = await getDaoDaoNickname(sender)
+                            
+                            telegramMsg = fmt(telegramMsg, '🐳  #Osmosis #Swap #Sell  🪙📤💸\n', 
+                                'Address ', code(sender), nickNameDAODAO, ' sold ', bold(amount.toString() + ' LEG'), '\n'
+                            )
+                            
+                            countMsgs++
+                        }
+                    }
+                } else if (decodedMsg.tokenOutDenom === denomLEGosmosis) {
+                    // #Buy
+                    let amount = 0
+                    for (const route of decodedMsg.routes) {
+                        amount += +route.tokenOutAmount
+                    }
+                    amount /= 1e6
+                    if (amount >= minAmount) {
+                        if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                        if (indexedTx.code === 0) {
+                            const sender = decodedMsg.sender
+                            const nickNameDAODAO = await getDaoDaoNickname(sender)
+                            
+                            telegramMsg = fmt(telegramMsg, '💱  #Osmosis #Swap #Buy  💸📥🪙\n', 
+                                'Address ', code(sender), nickNameDAODAO, ' bought ', bold(amount.toString() + ' LEG'), '\n'
+                            )
+                            
+                            countMsgs++
+                        }
+                    }
+                }
+            } else if (msg.typeUrl === '/osmosis.poolmanager.v1beta1.MsgSwapExactAmountIn') {
+                // #Swap
+                const decodedMsg = osmosis.poolmanager.v1beta1.MsgSwapExactAmountIn.decode(msg.value)
+                if (decodedMsg.tokenIn.denom === denomLEGosmosis) {
+                    // #Sell
+                    const amount = +decodedMsg.tokenIn.amount/1000000
+                    if (amount >= minAmount) {
+                        if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                        if (indexedTx.code === 0) {
+                            const sender = decodedMsg.sender
+                            const nickNameDAODAO = await getDaoDaoNickname(sender)
+                            
+                            telegramMsg = fmt(telegramMsg, '💱  #Osmosis #Swap #Sell  🪙📤💸\n', 
+                                'Address ', code(sender), nickNameDAODAO, ' sold ', bold(amount.toString() + ' LEG'), '\n'
+                            )
+                            
+                            countMsgs++
+                        }
+                    }
+                } else if (decodedMsg.routes[decodedMsg.routes.length - 1].tokenOutDenom === denomLEGosmosis) {
+                    // #Buy
+                    if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                    if (indexedTx.code === 0) {
+                        const amount = +osmosis.poolmanager.v1beta1.MsgSwapExactAmountInResponse
+                            .decode(indexedTx.msgResponses[i].value)
+                            .tokenOutAmount/1000000
+                        if (amount >= minAmount) {
+                            const sender = decodedMsg.sender
+                            const nickNameDAODAO = await getDaoDaoNickname(sender)
+                            
+                            telegramMsg = fmt(telegramMsg, '💱  #Osmosis #Swap #Buy  💸📥🪙\n', 
+                                'Address ', code(sender), nickNameDAODAO, ' bought ', bold(amount.toString() + ' LEG'), '\n'
+                            )
+                            
+                            countMsgs++
+                        }
+                    }
+                }
+            } else if (msg.typeUrl === '/osmosis.poolmanager.v1beta1.MsgSwapExactAmountOut') {
+                // #Swap
+                const decodedMsg = osmosis.poolmanager.v1beta1.MsgSwapExactAmountOut.decode(msg.value)
+                if (decodedMsg.tokenOut.denom === denomLEGosmosis) {
+                    // #Buy
+                    const amount = +decodedMsg.tokenOut.amount/1e6
+                    if (amount >= minAmount) {
+                        if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                        if (indexedTx.code === 0) {
+                            const sender = decodedMsg.sender
+                            const nickNameDAODAO = await getDaoDaoNickname(sender)
+                            
+                            telegramMsg = fmt(telegramMsg, '💱  #Osmosis #Swap #Buy  💸📥🪙\n', 
+                                'Address ', code(sender), nickNameDAODAO, ' bought ', bold(amount.toString() + ' LEG'), '\n'
+                            )
+                            
+                            countMsgs++
+                        }
+                    }
+                } else if (decodedMsg.routes[0].tokenInDenom === denomLEGosmosis) {
+                    // #Sell
+                    if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                    if (indexedTx.code === 0) {
+                        const amount = +osmosis.poolmanager.v1beta1.MsgSwapExactAmountOutResponse
+                            .decode(indexedTx.msgResponses[i].value)
+                            .tokenInAmount/1e6
+                        if (amount >= minAmount) {
+                            const sender = decodedMsg.sender
+                            const nickNameDAODAO = await getDaoDaoNickname(sender)
+                            
+                            telegramMsg = fmt(telegramMsg, '💱  #Osmosis #Swap #Sell  🪙📤💸\n', 
+                                'Address ', code(sender), nickNameDAODAO, ' sold ', bold(amount.toString() + ' LEG'), '\n'
+                            )
+                            
+                            countMsgs++
+                        }
+                    }
+                }
+            } else if (msg.typeUrl === '/cosmos.bank.v1beta1.MsgSend' && countMsgs < 20) {
                 // Send
 
                 const decodedMsg = registry.decode(msg) as MsgSend
