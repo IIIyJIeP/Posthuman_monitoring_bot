@@ -8,6 +8,7 @@ import { processTxsStargaze } from './stargaze/processTXs'
 import { processTxsNeutron } from './neutron/processTXs'
 import { processTxsInjective } from './injective/processTXs'
 import { processTxsJuno } from './juno/processTXs'
+import { processTxsCosmosHub } from './cosmoshub/processTXs'
 import { fmt } from 'telegraf/format'
 
 const DEPLOYMENT = process.env.DEPLOYMENT
@@ -40,6 +41,7 @@ export async function start_polling(queryClient: StargateClient, chainName: Chai
             : chainName === 'Osmosis' ? await processTxsOsmosis(decodedTxs, queryClient)
             : chainName === 'Injective' ? await processTxsInjective(decodedTxs, queryClient)
             : chainName === 'Juno' ? await processTxsJuno(decodedTxs, queryClient)
+            : chainName === 'CosmosHub' ? await processTxsCosmosHub(decodedTxs, queryClient)
         : []
         
         for (const msg of telegramMsgs) {
@@ -53,7 +55,7 @@ export async function start_polling(queryClient: StargateClient, chainName: Chai
         setTimeout(start_polling, 1 * 1000, queryClient, chainName)
         console.error(err)
         const time = Date.now()
-        if (time - lastServiceMsgTime > 10 * 60 * 1000) {
+        if (time - lastServiceMsgTime > 10 * 60 * 1000) { // 10 min
             await TelegramBot.sendServiceInformation(fmt(String(err), chainName))
             lastServiceMsgTime = time
         }

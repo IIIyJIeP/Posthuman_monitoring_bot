@@ -7,6 +7,7 @@ const db = {
         "Stargaze":0,
         "Neutron":0,
         "Injective":0,
+        "CosmosHub":0,
         "Juno":0
     }
 }
