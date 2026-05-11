@@ -1,7 +1,7 @@
 {
     "minAmountRESPprod": 0,
     "minAmountRESPtest": 0,
-    "explorerTxJunoURL": "https://explorer.chainroot.io/juno/transactions/",
+    "explorerTxJunoURL": "https://ping.pub/juno/tx/",
     "contractRESPJuno": "juno1uar7p2ecw208r2jj056nvh2kgz4myhkyhufjgyqclc8nqugquams6gc3at",
     "daoDaoNamesURL": "https://pfpk.daodao.zone/address/",
 
