@@ -3,7 +3,7 @@
     "minAmountPHMNtest": 0.000001,
     "daoDaoNamesURL": "https://pfpk.daodao.zone/address/",
     "explorerTxOsmosisURL": "https://www.mintscan.io/osmosis/tx/",
-    "explorerTxJunoURL": "https://explorer.chainroot.io/juno/transactions/",
+    "explorerTxJunoURL": "https://ping.pub/juno/tx/",
     "contractPHMNJuno": "juno1rws84uz7969aaa7pej303udhlkt3j9ca0l3egpcae98jwak9quzq8szn2l",
     "contractDASHold": "juno1jktfdt5g2d0fguvy8r8pl4gly7wps8phkwy08z6upc4nazkumrwq7lj0vn",
     "contractIbcPhmnJuno": "juno1v4887y83d6g28puzvt8cl0f3cdhd3y6y9mpysnsp3k8krdm7l6jqgm0rkn",
