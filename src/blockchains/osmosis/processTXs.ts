@@ -349,7 +349,7 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
                             telegramMsg = fmt(telegramMsg, '🪙  #Osmosis #IBCtransfer  📬\n',
                                 'Address ', code(sender), senderDaoDaoNick, ' sent over IBC protocol ',
                                 bold(amount.toString() + ' PHMN'),
-                                ' to ', code(receiver), receiverDaoDaoNick, '\n',
+                                ' to ', code(receiver), receiverDaoDaoNick, '\n\n',
                                 link('TX link', explorerTxOsmosisURL + tx.txId)
                             )
                             if (tx.memo !== '') {
@@ -444,7 +444,7 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
         }
         
         if (countMsgs > 0) {
-            telegramMsg = fmt(telegramMsg, link('TX link', explorerTxOsmosisURL + tx.txId))
+            telegramMsg = fmt('\n', telegramMsg, link('TX link', explorerTxOsmosisURL + tx.txId))
             if (tx.memo !== '') {
                 telegramMsg = fmt(telegramMsg, '\n\n memo: ', tx.memo)
             }
