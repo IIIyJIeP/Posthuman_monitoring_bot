@@ -143,7 +143,7 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
                                 telegramMsg = fmt(telegramMsg, '🐳  #Juno #IBCtransfer  📬\n', 
                                     'Address ', code(sender), senderDaoDaoNick, ' sent over IBC protocol ', 
                                     bold(amount.toString() + ' PHMN'),
-                                    ' to ', code(receiver), receiverDaoDaoNick, '\n',
+                                    ' to ', code(receiver), receiverDaoDaoNick, '\n\n',
                                     link('TX link', explorerTxJunoURL + tx.txId)
                                 )
                                 if (tx.memo !== '') {
@@ -354,7 +354,7 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
         }
         
         if (countMsgs > 0) {
-            telegramMsg = fmt(telegramMsg, link('TX link', explorerTxJunoURL + tx.txId))
+            telegramMsg = fmt('\n', telegramMsg, link('TX link', explorerTxJunoURL + tx.txId))
             if (tx.memo !== '') {
                 telegramMsg = fmt(telegramMsg, '\n\n memo: ', tx.memo)
             }
