@@ -81,7 +81,7 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
         }
         
         if (countMsgs > 0) {
-            telegramMsg = fmt(telegramMsg, link('TX link', explorerTxJunoURL + tx.txId))
+            telegramMsg = fmt('\n', telegramMsg, link('TX link', explorerTxJunoURL + tx.txId))
             if (tx.memo !== '') {
                 telegramMsg = fmt(telegramMsg, '\n\n memo: ', tx.memo)
             }
