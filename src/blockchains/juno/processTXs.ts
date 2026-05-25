@@ -6,7 +6,8 @@ import { DecodedTX } from '../decodeTxs'
 import { cosmwasm, ibc } from "juno-network"
 import { minAmountPHMN as minAmountPHMNprod, minAmountPHMNtest,
     explorerTxJunoURL, contractPHMNJuno, contractDASHold, contractIbcPhmnJuno,
-    contractDasPropose, dasProposalsURL, contractDasGovernance
+    contractDasPropose, dasProposalsURL, contractDasGovernance, 
+    contractIbcPhmnNeutron
 } from '../../config.json'
 import { getDaoDaoNickname } from '../daoDaoNames'
 import { getIndexedTx } from '../getTx'
@@ -115,6 +116,51 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
                     } else if (
                         executeContractMsg.send &&
                         executeContractMsg.send.contract === contractIbcPhmnJuno
+                    ) {
+                        const amount = +executeContractMsg.send.amount/1e6
+                        const sender = msg.sender
+                        const ibcMsg = JSON.parse(new TextDecoder().decode(Buffer.from(executeContractMsg.send.msg, 'base64')))
+                        const receiver = ibcMsg.remote_address as string
+                        const timeout = ibcMsg.timeout as number
+                        if (amount >= minAmountPHMN) {
+                            if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                            if (indexedTx.code === 0) {
+                                const packet_sequence = indexedTx.events.find((evnt) => 
+                                    evnt.type === 'send_packet' && 
+                                    JSON.parse(evnt.attributes.find((attr) => attr.key === 'packet_data')!.value)
+                                        .amount === Math.round(amount*1e6).toString() &&
+                                    JSON.parse(evnt.attributes.find((attr) => attr.key === 'packet_data')!.value)
+                                        .receiver === receiver
+                                )?.attributes.find((attr) => attr.key === 'packet_sequence')?.value || ''
+                                
+                                const [
+                                    senderDaoDaoNick,
+                                    receiverDaoDaoNick
+                                ] = await Promise.all([
+                                    getDaoDaoNickname(sender),
+                                    getDaoDaoNickname(receiver),
+                                ])
+    
+                                telegramMsg = fmt(telegramMsg, '🪙  #Juno #IBCtransfer  📬\n', 
+                                    'Address ', code(sender), senderDaoDaoNick, ' sent over IBC protocol ', 
+                                    bold(amount.toString() + ' PHMN'),
+                                    ' to ', code(receiver), receiverDaoDaoNick, '\n\n',
+                                    link('TX link', explorerTxJunoURL + tx.txId)
+                                )
+                                if (tx.memo !== '') {
+                                    telegramMsg = fmt(telegramMsg, '\n\n memo: ', tx.memo)
+                                }
+
+                                ibcMsgsBuffer.push({
+                                    packet_sequence,
+                                    telegramMsg
+                                })
+                                setTimeout(deleteIbcTx, timeout*1000, packet_sequence)
+                            }
+                        }
+                    } else if (
+                        executeContractMsg.send &&
+                        executeContractMsg.send.contract === contractIbcPhmnNeutron
                     ) {
                         const amount = +executeContractMsg.send.amount/1e6
                         const sender = msg.sender
@@ -343,7 +389,7 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
                 if (telegramMsg) {
                     deleteIbcTx(packeSequence)
                     const acknowledgement = JSON.parse(new TextDecoder().decode(msg.acknowledgement))
-                    if (acknowledgement.result === 'AQ==') {
+                    if (acknowledgement.result === 'MQ==' || acknowledgement.result === 'AQ==') {
                         if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
                         if (indexedTx.code === 0) {
                             telegramMsgs.push(telegramMsg)

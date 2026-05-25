@@ -5,6 +5,7 @@ import { decodeTxsInBlock} from './decodeTxs'
 import { processTxsOsmosis } from './osmosis/processTXs'
 import { processTxsJuno } from './juno/processTXs'
 import { TelegramBot } from '../telegram/telegram';
+import { processTxsNeutron } from './neutron/processTXs'
 
 const DEPLOYMENT = process.env.DEPLOYMENT
 const sendMsg =  DEPLOYMENT === 'production'? 
@@ -30,8 +31,12 @@ export async function start_polling(queryClient: StargateClient, chainName: Chai
         
         const telegramMsgs = chainName === 'Juno' ? 
             await processTxsJuno(decodedTxs, queryClient)
-        : await processTxsOsmosis(decodedTxs, queryClient)
-        
+        : chainName === 'Osmosis' ?
+            await processTxsOsmosis(decodedTxs, queryClient)
+        : chainName === 'Neutron' ?
+            await processTxsNeutron(decodedTxs, queryClient)
+        : []
+
         for (const msg of telegramMsgs) {
             console.log(msg)
             await sendMsg(msg)

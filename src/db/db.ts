@@ -4,7 +4,8 @@ import { ChainName } from "../blockchains/types";
 const db = {
     "lastHeight": {
         "Osmosis":0,
-        "Juno":0
+        "Juno":0,
+        "Neutron":0
     }
 }
 

@@ -379,7 +379,7 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
                         if (telegramMsg) {
                             deleteIbcTx(paccketSequence)
                             const acknowledgement = JSON.parse(new TextDecoder().decode(decodedMsg.acknowledgement))
-                            if (acknowledgement.result === 'MQ==') {
+                            if (acknowledgement.result === 'MQ==' || acknowledgement.result === 'AQ==') {
                                 if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
                                 if (indexedTx.code === 0) {
                                     telegramMsgs.push(telegramMsg)
