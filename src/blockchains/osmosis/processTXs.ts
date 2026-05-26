@@ -2,36 +2,39 @@ import 'dotenv/config'
 import { IndexedTx, StargateClient, defaultRegistryTypes } from '@cosmjs/stargate'
 import { DecodedTX } from '../decodeTxs'
 import { fmt, link, bold, code, FmtString } from 'telegraf/format'
-import { osmosis , ibc, cosmwasm } from 'osmojs'
+import { osmosis, ibc, cosmwasm } from 'osmojs'
 import { getDaoDaoNickname } from '../daoDaoNames'
-import { minAmountPHMN as minAmountPHMNprod, minAmountPHMNtest, 
-    explorerTxOsmosisURL, denomPHMNosmosis, contractPHMNJuno, 
-    contractIbcPhmnJuno, contractSkipSwap } from '../../config.json'
+import {
+    minAmountPHMN as minAmountPHMNprod, minAmountPHMNtest,
+    explorerTxOsmosisURL, denomPHMNosmosis, contractPHMNJuno,
+    contractIbcPhmnJuno
+} from '../../config.json'
 import { isPHMNpool, getPoolInfo } from './poolInfo'
 import { Registry } from "@cosmjs/proto-signing"
 import { MsgSend } from 'osmojs/dist/codegen/cosmos/bank/v1beta1/tx'
 import { getIndexedTx } from '../getTx'
+import { getReceiverFromMemo } from '../../utils/memojson'
 
 const registry = new Registry(defaultRegistryTypes)
 
 const DEPLOYMENT = process.env.DEPLOYMENT
-const minAmountPHMN = DEPLOYMENT === 'production'? minAmountPHMNprod : minAmountPHMNtest
+const minAmountPHMN = DEPLOYMENT === 'production' ? minAmountPHMNprod : minAmountPHMNtest
 
 let ibcMsgsBuffer: {
     packet_sequence: bigint,
     telegramMsg: FmtString
 }[] = []
-function deleteIbcTx (sequence: bigint) {
+function deleteIbcTx(sequence: bigint) {
     ibcMsgsBuffer = ibcMsgsBuffer.filter((msg) => msg.packet_sequence !== sequence)
 }
 
-export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: StargateClient) {
+export async function processTxsOsmosis(decodedTxs: DecodedTX[], queryClient: StargateClient) {
     const telegramMsgs: FmtString[] = []
     for (const tx of decodedTxs) {
         let telegramMsg = fmt``
         let countMsgs = 0
         let indexedTx: IndexedTx | null = null
-        
+
         for (let i = 0; i < tx.msgs.length; i++) {
             const msg = tx.msgs[i]
             if (msg.typeUrl === '/osmosis.poolmanager.v1beta1.MsgSplitRouteSwapExactAmountIn') {
@@ -44,15 +47,15 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
                     if (indexedTx.code === 0) {
                         const amount = +osmosis.poolmanager.v1beta1.MsgSplitRouteSwapExactAmountInResponse
                             .decode(indexedTx.msgResponses[i].value)
-                            .tokenOutAmount/1000000
+                            .tokenOutAmount / 1000000
                         if (amount >= minAmountPHMN) {
                             const sender = decodedMsg.sender
                             const nickNameDAODAO = await getDaoDaoNickname(sender)
-                            
-                            telegramMsg = fmt(telegramMsg, '🐳  #Osmosis #Swap #Buy  💸📥🪙\n', 
+
+                            telegramMsg = fmt(telegramMsg, '🪙  #Osmosis #Swap #Buy  💸📥🪙\n',
                                 'Address ', code(sender), nickNameDAODAO, ' bought ', bold(amount.toString() + ' PHMN'), '\n'
                             )
-                            
+
                             countMsgs++
                         }
                     }
@@ -68,11 +71,11 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
                         if (indexedTx.code === 0) {
                             const sender = decodedMsg.sender
                             const nickNameDAODAO = await getDaoDaoNickname(sender)
-                            
-                            telegramMsg = fmt(telegramMsg, '🐳  #Osmosis #Swap #Sell  🪙📤💸\n', 
+
+                            telegramMsg = fmt(telegramMsg, '🪙  #Osmosis #Swap #Sell  🪙📤💸\n',
                                 'Address ', code(sender), nickNameDAODAO, ' sold ', bold(amount.toString() + ' PHMN'), '\n'
                             )
-                            
+
                             countMsgs++
                         }
                     }
@@ -153,7 +156,83 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
                             telegramMsg = fmt(telegramMsg, '🐳  #Osmosis #Swap #Buy  💸📥🪙\n', 
                                 'Address ', code(sender), nickNameDAODAO, ' bought ', bold(amount.toString() + ' PHMN'), '\n'
                             )
-                            
+
+                            countMsgs++
+                        }
+                    }
+                }
+            } else if (msg.typeUrl === '/osmosis.poolmanager.v1beta1.MsgSwapExactAmountIn') {
+                // #Swap
+                const decodedMsg = osmosis.poolmanager.v1beta1.MsgSwapExactAmountIn.decode(msg.value)
+                if (decodedMsg.tokenIn.denom === denomPHMNosmosis) {
+                    // #Sell
+                    const amount = +decodedMsg.tokenIn.amount / 1000000
+                    if (amount >= minAmountPHMN) {
+                        if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                        if (indexedTx.code === 0) {
+                            const sender = decodedMsg.sender
+                            const nickNameDAODAO = await getDaoDaoNickname(sender)
+
+                            telegramMsg = fmt(telegramMsg, '🪙  #Osmosis #Swap #Sell  🪙📤💸\n',
+                                'Address ', code(sender), nickNameDAODAO, ' sold ', bold(amount.toString() + ' PHMN'), '\n'
+                            )
+
+                            countMsgs++
+                        }
+                    }
+                } else if (decodedMsg.routes[decodedMsg.routes.length - 1].tokenOutDenom === denomPHMNosmosis) {
+                    // #Buy
+                    if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                    if (indexedTx.code === 0) {
+                        const amount = +osmosis.poolmanager.v1beta1.MsgSwapExactAmountInResponse
+                            .decode(indexedTx.msgResponses[i].value)
+                            .tokenOutAmount / 1000000
+                        if (amount >= minAmountPHMN) {
+                            const sender = decodedMsg.sender
+                            const nickNameDAODAO = await getDaoDaoNickname(sender)
+
+                            telegramMsg = fmt(telegramMsg, '🪙  #Osmosis #Swap #Buy  💸📥🪙\n',
+                                'Address ', code(sender), nickNameDAODAO, ' bought ', bold(amount.toString() + ' PHMN'), '\n'
+                            )
+
+                            countMsgs++
+                        }
+                    }
+                }
+            } else if (msg.typeUrl === '/osmosis.poolmanager.v1beta1.MsgSwapExactAmountOut') {
+                // #Swap
+                const decodedMsg = osmosis.poolmanager.v1beta1.MsgSwapExactAmountOut.decode(msg.value)
+                if (decodedMsg.tokenOut.denom === denomPHMNosmosis) {
+                    // #Buy
+                    const amount = +decodedMsg.tokenOut.amount / 1e6
+                    if (amount >= minAmountPHMN) {
+                        if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                        if (indexedTx.code === 0) {
+                            const sender = decodedMsg.sender
+                            const nickNameDAODAO = await getDaoDaoNickname(sender)
+
+                            telegramMsg = fmt(telegramMsg, '🪙  #Osmosis #Swap #Buy  💸📥🪙\n',
+                                'Address ', code(sender), nickNameDAODAO, ' bought ', bold(amount.toString() + ' PHMN'), '\n'
+                            )
+
+                            countMsgs++
+                        }
+                    }
+                } else if (decodedMsg.routes[0].tokenInDenom === denomPHMNosmosis) {
+                    // #Sell
+                    if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                    if (indexedTx.code === 0) {
+                        const amount = +osmosis.poolmanager.v1beta1.MsgSwapExactAmountOutResponse
+                            .decode(indexedTx.msgResponses[i].value)
+                            .tokenInAmount / 1e6
+                        if (amount >= minAmountPHMN) {
+                            const sender = decodedMsg.sender
+                            const nickNameDAODAO = await getDaoDaoNickname(sender)
+
+                            telegramMsg = fmt(telegramMsg, '🪙  #Osmosis #Swap #Sell  🪙📤💸\n',
+                                'Address ', code(sender), nickNameDAODAO, ' sold ', bold(amount.toString() + ' PHMN'), '\n'
+                            )
+
                             countMsgs++
                         }
                     }
@@ -203,7 +282,7 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
                 let amount = 0
                 for (const token of decodedMsg.amount) {
                     if (token.denom === denomPHMNosmosis) {
-                        amount += +token.amount/1000000
+                        amount += +token.amount / 1000000
                     }
                 }
                 if (amount >= minAmountPHMN) {
@@ -212,24 +291,24 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
                         if (countMsgs === 0) {
                             const sender = decodedMsg.fromAddress as string
                             const toAddress = decodedMsg.toAddress as string
-                            
+
                             const [
                                 senderDaoDaoNick,
                                 toAddressDaoDaoNick
                             ] = await Promise.all([
                                 getDaoDaoNickname(sender),
                                 getDaoDaoNickname(toAddress)
-                            ]) 
-                            
-                            telegramMsg = fmt(telegramMsg, '🐳  #Osmosis #Send  📬\n', 
+                            ])
+
+                            telegramMsg = fmt(telegramMsg, '🪙  #Osmosis #Send  📬\n',
                                 'Address ', code(sender), senderDaoDaoNick, ' sent ', bold(amount.toString() + ' PHMN'), ' to ', code(toAddress), toAddressDaoDaoNick, '\n'
                             )
                         } else {
                             const toAddress = decodedMsg.toAddress as string
                             const toAddressDaoDaoNick = await getDaoDaoNickname(toAddress)
-                            
+
                             if (countMsgs > 1) telegramMsg.text = telegramMsg.text.replace(/...\n$/, '')
-                            telegramMsg = fmt(telegramMsg, '🐳  #Osmosis #Send  📬\n', 
+                            telegramMsg = fmt(telegramMsg, '🪙  #Osmosis #Send  📬\n',
                                 'sent ', bold(amount.toString() + ' PHMN'), ' to ', code(toAddress), toAddressDaoDaoNick, '\n',
                                 '...\n'
                             )
@@ -237,7 +316,7 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
                         countMsgs++
                     }
                 }
-            // #AddLiquidity
+                // #AddLiquidity
             } else if (msg.typeUrl === '/osmosis.gamm.v1beta1.MsgJoinPool') {
                 const decodedMsg = osmosis.gamm.v1beta1.MsgJoinPool.decode(msg.value)
                 if (isPHMNpool(decodedMsg.poolId)) {
@@ -247,50 +326,50 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
                         const tokenIns = osmosis.gamm.v1beta1.MsgJoinPoolResponse
                             .decode(indexedTx.msgResponses[i].value)
                             .tokenIn
-                        const amountPHMN = +tokenIns.find((coin)=>coin.denom === denomPHMNosmosis)!.amount/1e6
+                        const amountPHMN = +tokenIns.find((coin) => coin.denom === denomPHMNosmosis)!.amount / 1e6
                         const amountSecondToken = +tokenIns
-                            .find((coin)=>coin.denom === poolInfo!.secondTokenBaseDenom)!
-                            .amount/poolInfo!.secondTokenMultiplier
+                            .find((coin) => coin.denom === poolInfo!.secondTokenBaseDenom)!
+                            .amount / poolInfo!.secondTokenMultiplier
                         if (amountPHMN >= minAmountPHMN) {
                             const sender = decodedMsg.sender
                             const senderDaoDaoNick = await getDaoDaoNickname(sender)
 
-                            telegramMsg = fmt(telegramMsg, '🐳  #Osmosis #AddLiquidity  ➕💰\n', 
-                                'Address ', code(sender), senderDaoDaoNick, ' added ', 
+                            telegramMsg = fmt(telegramMsg, '🪙  #Osmosis #AddLiquidity  ➕💰\n',
+                                'Address ', code(sender), senderDaoDaoNick, ' added ',
                                 bold(amountPHMN.toString() + ' PHMN'), ' and ',
                                 bold(amountSecondToken.toString() + ' ' + poolInfo!.secondTokenDenom),
                                 ' to the Osmosis liquidity pool #', poolInfo!.poolId.toString(), '\n'
                             )
-                            
+
                             countMsgs++
                         }
                     }
                 }
-            // #AddLiquidity #SingleAsset
-            } else if (msg.typeUrl === '/osmosis.gamm.v1beta1.MsgJoinSwapExternAmountIn') { 
+                // #AddLiquidity #SingleAsset
+            } else if (msg.typeUrl === '/osmosis.gamm.v1beta1.MsgJoinSwapExternAmountIn') {
                 const decodedMsg = osmosis.gamm.v1beta1.MsgJoinSwapExternAmountIn.decode(msg.value)
                 if (
                     isPHMNpool(decodedMsg.poolId) &&
                     decodedMsg.tokenIn.denom === denomPHMNosmosis &&
-                    +decodedMsg.tokenIn.amount/1e6 >= minAmountPHMN
+                    +decodedMsg.tokenIn.amount / 1e6 >= minAmountPHMN
                 ) {
-                
+
                     if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
                     if (indexedTx.code === 0) {
                         const sender = decodedMsg.sender
                         const senderDaoDaoNick = await getDaoDaoNickname(sender)
                         const poolInfo = getPoolInfo(decodedMsg.poolId)
 
-                        telegramMsg = fmt(telegramMsg, '🐳  #Osmosis #AddLiquidity #SingleAsset  ➕💰\n', 
-                            'Address ', code(sender), senderDaoDaoNick, ' added ', 
-                            bold((+decodedMsg.tokenIn.amount/1e6).toString() + ' PHMN'),
+                        telegramMsg = fmt(telegramMsg, '🪙  #Osmosis #AddLiquidity #SingleAsset  ➕💰\n',
+                            'Address ', code(sender), senderDaoDaoNick, ' added ',
+                            bold((+decodedMsg.tokenIn.amount / 1e6).toString() + ' PHMN'),
                             ' to the Osmosis liquidity pool #', decodedMsg.poolId.toString(), ' PHMN/', poolInfo!.secondTokenDenom, '\n'
                         )
-                            
+
                         countMsgs++
                     }
                 }
-            // #RemoveLiquidity
+                // #RemoveLiquidity
             } else if (msg.typeUrl === '/osmosis.gamm.v1beta1.MsgExitPool') {
                 const decodedMsg = osmosis.gamm.v1beta1.MsgExitPool.decode(msg.value)
                 if (isPHMNpool(decodedMsg.poolId)) {
@@ -303,17 +382,17 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
 
                         const amountPHMN = +response.tokenOut
                             .find((coin) => coin.denom === denomPHMNosmosis)!
-                            .amount/1e6
+                            .amount / 1e6
                         const amountSecondToken = +response.tokenOut
                             .find((coin) => coin.denom === poolInfo!.secondTokenBaseDenom)!
-                            .amount/poolInfo!.secondTokenMultiplier
-                        
+                            .amount / poolInfo!.secondTokenMultiplier
+
                         if (amountPHMN >= minAmountPHMN) {
                             const sender = decodedMsg.sender
                             const senderDaoDaoNick = await getDaoDaoNickname(sender)
-                        
-                            telegramMsg = fmt(telegramMsg, '🐳  #Osmosis #RemoveLiquidity  ➖💰\n', 
-                                'Address ', code(sender), senderDaoDaoNick, ' removed ', 
+
+                            telegramMsg = fmt(telegramMsg, '🪙  #Osmosis #RemoveLiquidity  ➖💰\n',
+                                'Address ', code(sender), senderDaoDaoNick, ' removed ',
                                 bold(amountPHMN.toString() + ' PHMN'), ' and ', bold(amountSecondToken.toString() + ' ' + poolInfo!.secondTokenDenom),
                                 ' from the Osmosis liquidity pool #', decodedMsg.poolId.toString(), '\n'
                             )
@@ -321,22 +400,22 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
                         }
                     }
                 }
-            // #IBCtransfer
-            } else if (msg.typeUrl === '/ibc.applications.transfer.v1.MsgTransfer') {
+                // #IBCtransfer
+            } else if (msg.typeUrl === '/ibc.applications.transfer.v1.MsgTransfer') { // #IBCtransfer
                 const decodedMsg = ibc.applications.transfer.v1.MsgTransfer.decode(msg.value)
                 if (
                     decodedMsg.sourceChannel === 'channel-169' &&
                     decodedMsg.token.denom === denomPHMNosmosis
-                ){
+                ) {
                     const sender = decodedMsg.sender
                     const receiver = decodedMsg.receiver
-                    const amount = +decodedMsg.token.amount/1e6
+                    const amount = +decodedMsg.token.amount / 1e6
                     if (amount >= minAmountPHMN) {
                         if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
                         if (indexedTx.code === 0) {
                             const packet_sequence = ibc.applications.transfer.v1.MsgTransferResponse
                                 .decode(indexedTx.msgResponses[i].value)
-                            .sequence
+                                .sequence
 
                             const [
                                 senderDaoDaoNick,
@@ -345,11 +424,11 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
                                 getDaoDaoNickname(sender),
                                 getDaoDaoNickname(receiver),
                             ])
-                
-                            telegramMsg = fmt(telegramMsg, '🐳  #Osmosis #IBCtransfer  📬\n',
+
+                            telegramMsg = fmt(telegramMsg, '🪙  #Osmosis #IBCtransfer  📬\n',
                                 'Address ', code(sender), senderDaoDaoNick, ' sent over IBC protocol ',
                                 bold(amount.toString() + ' PHMN'),
-                                ' to ', code(receiver), receiverDaoDaoNick, '\n',
+                                ' to ', code(receiver), receiverDaoDaoNick, '\n\n',
                                 link('TX link', explorerTxOsmosisURL + tx.txId)
                             )
                             if (tx.memo !== '') {
@@ -360,11 +439,11 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
                                 packet_sequence,
                                 telegramMsg
                             })
-                            setTimeout(deleteIbcTx, 1800*1000, packet_sequence)
+                            setTimeout(deleteIbcTx, 1800 * 1000, packet_sequence)
                         }
                     }
                 }
-            // #IbcAcknowledgevent
+                // #IbcAcknowledgevent
             } else if (msg.typeUrl === '/ibc.core.channel.v1.MsgAcknowledgement') {
                 const decodedMsg = ibc.core.channel.v1.MsgAcknowledgement.decode(msg.value)
                 if (
@@ -379,7 +458,7 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
                         if (telegramMsg) {
                             deleteIbcTx(paccketSequence)
                             const acknowledgement = JSON.parse(new TextDecoder().decode(decodedMsg.acknowledgement))
-                            if (acknowledgement.result === 'MQ==') {
+                            if (acknowledgement.result === 'MQ==' || acknowledgement.result === 'AQ==') {
                                 if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
                                 if (indexedTx.code === 0) {
                                     telegramMsgs.push(telegramMsg)
@@ -391,64 +470,96 @@ export async function processTxsOsmosis (decodedTxs: DecodedTX[], queryClient: S
             } else if (msg.typeUrl === '/cosmwasm.wasm.v1.MsgExecuteContract') {
                 // #SkipSwap
                 const decodedMsg = cosmwasm.wasm.v1.MsgExecuteContract.decode(msg.value)
-                if (decodedMsg.contract !== contractSkipSwap) continue;
+                // if (decodedMsg.contract !== contractSkipSwap) continue;
+                const contractMsg = JSON.parse(new TextDecoder().decode(decodedMsg.msg)) as {
+                    swap_and_action?: {
+                        affiliates?: [],
+                        min_asset?: {
+                            native?: {
+                                amount: string,
+                                denom: string
+                            }
+                        },
+                        post_swap_action?: {
+                            ibc_transfer?: {
+                                ibc_info?: {
+                                    memo?: string,
+                                    receiver?: string,
+                                    recover_address?: string,
+                                    source_channel?: string
+                                }
+                            }
+                        },
+                        user_swap?: {
+                            swap_exact_asset_in?: {
+                                operations?: [],
+                                swap_venue_name?: string
+                            }
+                        },
+                        timeout_timestamp?: number
+                    }
+                }
+                if (!contractMsg.swap_and_action) continue;
+
                 const phmnInFunds = decodedMsg.funds.find(coin => coin.denom === denomPHMNosmosis)
-                if (phmnInFunds) {
+
+                if (phmnInFunds) { // #Sell
+
                     // #Sell
-                    const amount = +phmnInFunds.amount/1e6
+                    const amount = +phmnInFunds.amount / 1e6
                     if (amount < minAmountPHMN) continue;
                     if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
                     if (indexedTx.code !== 0) continue;
                     const sender = decodedMsg.sender
                     const nickNameDAODAO = await getDaoDaoNickname(sender)
-                    
-                    telegramMsg = fmt(telegramMsg, '🪙  #SkipSwap #Sell  🪙📤💸\n', 
+
+                    telegramMsg = fmt(telegramMsg, '🪙 #Osmosis #SkipSwap #Sell  🪙📤💸\n',
                         'Address ', code(sender), nickNameDAODAO, ' sold ', bold(amount.toString() + ' PHMN'), '\n'
                     )
-                    
+
                     countMsgs++
-                } else { 
+
+                } else if (contractMsg.swap_and_action?.min_asset?.native?.denom === denomPHMNosmosis) { // #Buy
+
                     // #Buy
-                    const contractMsg = JSON.parse(new TextDecoder().decode(decodedMsg.msg)) as {
-                        swap_and_action?: {
-                            min_asset?: {
-                                native?: {
-                                    denom: string,
-                                    amount: string
-                                }
-                            }
-                        }
-                    }
-                    if (contractMsg.swap_and_action?.min_asset?.native?.denom !== denomPHMNosmosis) continue;
                     if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
                     if (indexedTx.code !== 0) continue;
-                    const amount = +(indexedTx.events.find (
+                    const amount = +(indexedTx.events.find(
                         ev => ev.type === 'token_swapped' && ev.attributes.find(
                             attr => attr.key === 'tokens_out'
                         )?.value.includes(denomPHMNosmosis)
                     )?.attributes.find(
                         attr => attr.key === 'tokens_out'
-                    )?.value.replace(denomPHMNosmosis, '') || '0')/1e6
+                    )?.value.replace(denomPHMNosmosis, '') || '0') / 1e6
                     if (amount < minAmountPHMN) continue;
-                    
+
                     const sender = decodedMsg.sender
                     const nickNameDAODAO = await getDaoDaoNickname(sender)
-                    
-                    telegramMsg = fmt(telegramMsg, '🪙  #SkipSwap #Buy  💸📥🪙\n', 
+
+                    telegramMsg = fmt(telegramMsg, '🪙 #Osmosis #SkipSwap #Buy  💸📥🪙\n',
                         'Address ', code(sender), nickNameDAODAO, ' bought ', bold(amount.toString() + ' PHMN'), '\n'
                     )
-                    
                     countMsgs++
+
+                    // #IBCtransfer
+                    const ibcInfo = contractMsg.swap_and_action.post_swap_action?.ibc_transfer?.ibc_info
+                    if (!ibcInfo) continue;
+                    const receiver = getReceiverFromMemo(ibcInfo.memo || "") || ibcInfo.receiver
+                    if (!receiver) continue;
+                    const receiverDaoDaoNick = await getDaoDaoNickname(receiver)
+                    telegramMsg = fmt(telegramMsg, '🪙 #IBCtransfer  📬\n',
+                        '& sent over IBC protocol to ', code(receiver), receiverDaoDaoNick, '\n',
+                    )
                 }
             }
         }
-        
+
         if (countMsgs > 0) {
-            telegramMsg = fmt(telegramMsg, link('TX link', explorerTxOsmosisURL + tx.txId))
+            telegramMsg = fmt('\n', telegramMsg, link('TX link', explorerTxOsmosisURL + tx.txId))
             if (tx.memo !== '') {
                 telegramMsg = fmt(telegramMsg, '\n\n memo: ', tx.memo)
             }
-            
+
             telegramMsgs.push(telegramMsg)
         }
     }

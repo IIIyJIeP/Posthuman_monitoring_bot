@@ -290,6 +290,11 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
+"@neutron-org/neutronjs@^4.2.0":
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/@neutron-org/neutronjs/-/neutronjs-4.2.0.tgz#7d98d4bc1568f22c015736d6fbe768ddfba14798"
+  integrity sha512-l3ILkT8H6bO522RoNb37NMQkqlp8qvKNm7v6QlzORtClqbM7VbRv2/INgy8wn8USV5AmcnCdl9M4KfvvGw5k9w==
+
 "@noble/hashes@^1", "@noble/hashes@^1.0.0":
   version "1.3.3"
   resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.3.3.tgz#39908da56a4adc270147bb07968bf3b16cfe1699"

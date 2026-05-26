@@ -5,10 +5,12 @@ import { decodeTxsInBlock} from './decodeTxs'
 import { processTxsOsmosis } from './osmosis/processTXs'
 import { processTxsJuno } from './juno/processTXs'
 import { TelegramBot } from '../telegram/telegram';
+import { processTxsNeutron } from './neutron/processTXs'
 
-const {
-    sendMsgWhalesChannel,
-} = TelegramBot
+const DEPLOYMENT = process.env.DEPLOYMENT
+const sendMsg =  DEPLOYMENT === 'production'? 
+    TelegramBot.sendMsgToChannel
+: TelegramBot.sendServiceInformation
 
 export async function start_polling(queryClient: StargateClient, chainName: ChainName) {
     try {
@@ -29,11 +31,15 @@ export async function start_polling(queryClient: StargateClient, chainName: Chai
         
         const telegramMsgs = chainName === 'Juno' ? 
             await processTxsJuno(decodedTxs, queryClient)
-        : await processTxsOsmosis(decodedTxs, queryClient)
-        
+        : chainName === 'Osmosis' ?
+            await processTxsOsmosis(decodedTxs, queryClient)
+        : chainName === 'Neutron' ?
+            await processTxsNeutron(decodedTxs, queryClient)
+        : []
+
         for (const msg of telegramMsgs) {
             console.log(msg)
-            await sendMsgWhalesChannel(msg)
+            await sendMsg(msg)
         }
 
         setLastHeight(chainName, height)

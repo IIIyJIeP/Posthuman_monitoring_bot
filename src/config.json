@@ -1,18 +1,23 @@
 {
-    "minAmountPHMN": 10.0,
+    "minAmountPHMN": 0.000001,
     "minAmountPHMNtest": 0.000001,
     "daoDaoNamesURL": "https://pfpk.daodao.zone/address/",
     "explorerTxOsmosisURL": "https://www.mintscan.io/osmosis/tx/",
+    "explorerTxNeutronURL": "https://www.mintscan.io/neutron/tx/",
     "explorerTxJunoURL": "https://ping.pub/juno/tx/",
     "contractPHMNJuno": "juno1rws84uz7969aaa7pej303udhlkt3j9ca0l3egpcae98jwak9quzq8szn2l",
     "contractDASHold": "juno1jktfdt5g2d0fguvy8r8pl4gly7wps8phkwy08z6upc4nazkumrwq7lj0vn",
     "contractIbcPhmnJuno": "juno1v4887y83d6g28puzvt8cl0f3cdhd3y6y9mpysnsp3k8krdm7l6jqgm0rkn",
+    "contractIbcPhmnNeutron": "juno1vw6l0gjwju73chh0nqc097347r7ucdx7vshm38qp25xr36wckhqsepcmsd",
     "contractDasPropose": "juno169m5zgfxnquukj2cgrkgxq4gsuw9ee7pjez4g9g4mkvafzkums6q5632mp",
     "dasProposalsURL": "https://dao.daodao.zone/juno1h5ex5dn62arjwvwkh88r475dap8qppmmec4sgxzmtdn5tnmke3lqwpplgg/proposals",
     "contractDasGovernance": "juno1mf3wshvp2vr7kuqrjk4le33l4seeltwara9nm3m2xt8kckg7kekset6njw",
     "dasTreasuryAddress": "juno1h5ex5dn62arjwvwkh88r475dap8qppmmec4sgxzmtdn5tnmke3lqwpplgg",
     "denomPHMNosmosis": "ibc/D3B574938631B0A1BA704879020C696E514CFADAA7643CDE4BD5EB010BDE327B",
+    "denomPHMNneutron": "ibc/4698B7C533CB50F4120691368F71A0E7161DA26F58376262ADF3F44AAAA6EF9E",
+    "denomUSDCneutron": "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
     "contractSkipSwap": "osmo1vkdakqqg5htq5c3wy2kj2geq536q665xdexrtjuwqckpads2c2nsvhhcyv",
+    "contractPhmnPoolNeutron": "neutron1muu00n0ae5z7kwnjfn98naju9p6vrj4msj35netm2ffjqs5wxyts57cwjv",
     "poolsPHMNosmosis": [
         {
             "poolId": 1255,
@@ -145,6 +150,22 @@
         {
             "subdaoTag": "UaCommunity",
             "treasuryAddress": "juno10p866hul4r7jzp894lcxzjg74zk4g484m8z4y82ha3z44ccqymkqdvaqvh"
+        },
+        {
+            "subdaoTag": "TestNetSubDAO",
+            "treasuryAddress": "juno1wd8g3ahsnre4e8sltexte04hehtkt76tvqhddc9wsfyj9am4xt0skyqqlc"
+        },
+        {
+            "subdaoTag": "InfoSubDAO",
+            "treasuryAddress": "juno1ud8avxjwk5m97s8s5pqd0qhg0lyxqxefjzupyhrqvpq2002svfpq8urfuq"
+        },
+        {
+            "subdaoTag": "AISubDAO",
+            "treasuryAddress": "juno1l00nplvtnucaud94fs9y5mmckmrpc5d96kpdm8kxwrpkzhlmhxjq07x3w3"
+        },
+        {
+            "subdaoTag": "IncentiveSubDAO",
+            "treasuryAddress": "juno19hxxc04rvmn4nj5tvd7h63fsmzaxj6gk3ss2wxtsgg97k54ylzysp0evep"
         },
         {
             "subdaoTag": "TestNetSubDAO",
