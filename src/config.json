@@ -1,5 +1,5 @@
 {
-    "minAmountPHMN": 0.000001,
+    "minAmountPHMN": 10.0,
     "minAmountPHMNtest": 0.000001,
     "daoDaoNamesURL": "https://pfpk.daodao.zone/address/",
     "explorerTxOsmosisURL": "https://www.mintscan.io/osmosis/tx/",
