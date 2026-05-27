@@ -63,7 +63,7 @@ export async function processTxsNeutron(decodedTxs: DecodedTX[], queryClient: St
                                 getDaoDaoNickname(sender),
                                 getDaoDaoNickname(toAddress)
                             ])
-                            telegramMsg = fmt(telegramMsg, '🪙  #Neutron #Send  📬\n',
+                            telegramMsg = fmt(telegramMsg, '🐳  #Neutron #Send  📬\n',
                                 'Address ', code(sender), senderDaoDaoNick, ' sent ', bold(amount.toString() + ' PHMN'), ' to ', code(toAddress), toAddressDaoDaoNick, '\n'
                             )
                         } else {
@@ -72,7 +72,7 @@ export async function processTxsNeutron(decodedTxs: DecodedTX[], queryClient: St
 
                             if (countMsgs > 1) telegramMsg.text = telegramMsg.text.replace(/...\n$/, '');
 
-                            telegramMsg = fmt(telegramMsg, '🪙  #Neutron #Send  📬\n',
+                            telegramMsg = fmt(telegramMsg, '🐳  #Neutron #Send  📬\n',
                                 'sent ', bold(amount.toString() + ' PHMN'), ' to ', code(toAddress), toAddressDaoDaoNick, '\n',
                                 '...\n'
                             )
@@ -104,7 +104,7 @@ export async function processTxsNeutron(decodedTxs: DecodedTX[], queryClient: St
                                 getDaoDaoNickname(receiver),
                             ])
 
-                            telegramMsg = fmt(telegramMsg, '🪙  #Neutron #IBCtransfer  📬\n',
+                            telegramMsg = fmt(telegramMsg, '🐳  #Neutron #IBCtransfer  📬\n',
                                 'Address ', code(sender), senderDaoDaoNick, ' sent over IBC protocol ',
                                 bold(amount.toString() + ' PHMN'),
                                 ' to ', code(receiver), receiverDaoDaoNick, '\n',
@@ -159,7 +159,7 @@ export async function processTxsNeutron(decodedTxs: DecodedTX[], queryClient: St
                             const sender = decodedMsg.sender
                             const senderDaoDaoNick = await getDaoDaoNickname(sender)
 
-                            telegramMsg = fmt(telegramMsg, '🪙  #Neutron #Swap #Sell  🪙📤💸\n',
+                            telegramMsg = fmt(telegramMsg, '🐳  #Neutron #Swap #Sell  🪙📤💸\n',
                                 'Address ', code(sender), senderDaoDaoNick, ' sold ', bold(amount.toString() + ' PHMN'), '\n'
                             )
                             countMsgs++
@@ -179,7 +179,7 @@ export async function processTxsNeutron(decodedTxs: DecodedTX[], queryClient: St
                             const sender = decodedMsg.sender
                             const senderDaoDaoNick = await getDaoDaoNickname(sender)
 
-                            telegramMsg = fmt(telegramMsg, '🪙  #Neutron #Swap #Buy  💸📥🪙\n',
+                            telegramMsg = fmt(telegramMsg, '🐳  #Neutron #Swap #Buy  💸📥🪙\n',
                                 'Address ', code(sender), senderDaoDaoNick, ' bought ', bold(amount.toString() + ' PHMN'), '\n'
                             )
                             countMsgs++
@@ -231,7 +231,7 @@ export async function processTxsNeutron(decodedTxs: DecodedTX[], queryClient: St
                         const sender = decodedMsg.sender
                         const nickNameDAODAO = await getDaoDaoNickname(sender)
 
-                        telegramMsg = fmt(telegramMsg, '🪙 #Neutron #Astroport #Swap #Sell  🪙📤💸\n',
+                        telegramMsg = fmt(telegramMsg, '🐳 #Neutron #Astroport #Swap #Sell  🪙📤💸\n',
                             'Address ', code(sender), nickNameDAODAO, ' sold ', bold(amount.toString() + ' PHMN'), '\n'
                         )
 
@@ -254,7 +254,7 @@ export async function processTxsNeutron(decodedTxs: DecodedTX[], queryClient: St
                         const sender = decodedMsg.sender
                         const nickNameDAODAO = await getDaoDaoNickname(sender)
 
-                        telegramMsg = fmt(telegramMsg, '🪙 #Neutron #Astroport #Swap #Buy  💸📥🪙\n',
+                        telegramMsg = fmt(telegramMsg, '🐳 #Neutron #Astroport #Swap #Buy  💸📥🪙\n',
                             'Address ', code(sender), nickNameDAODAO, ' bought ', bold(amount.toString() + ' PHMN'), '\n'
                         )
                         countMsgs++
@@ -265,7 +265,7 @@ export async function processTxsNeutron(decodedTxs: DecodedTX[], queryClient: St
                         const receiver = getReceiverFromMemo(ibcInfo.memo || "") || ibcInfo.receiver
                         if (!receiver) continue;
                         const receiverDaoDaoNick = await getDaoDaoNickname(receiver)
-                        telegramMsg = fmt(telegramMsg, '🪙 #IBCtransfer  📬\n',
+                        telegramMsg = fmt(telegramMsg, '🐳 #IBCtransfer  📬\n',
                             '& sent over IBC protocol to ', code(receiver), receiverDaoDaoNick, '\n',
                         )
                     }
