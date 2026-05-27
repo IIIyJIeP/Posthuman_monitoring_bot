@@ -95,7 +95,7 @@ export async function processTxsOsmosis(decodedTxs: DecodedTX[], queryClient: St
                             const sender = decodedMsg.sender
                             const nickNameDAODAO = await getDaoDaoNickname(sender)
                             
-                            telegramMsg = fmt(telegramMsg, '🐳  #Osmosis #Swap #Sell  🪙📤💸\n', 
+                            telegramMsg = fmt(telegramMsg, '🪙  #Osmosis #Swap #Sell  🪙📤💸\n', 
                                 'Address ', code(sender), nickNameDAODAO, ' sold ', bold(amount.toString() + ' PHMN'), '\n'
                             )
                             
@@ -115,7 +115,7 @@ export async function processTxsOsmosis(decodedTxs: DecodedTX[], queryClient: St
                             const sender = decodedMsg.sender
                             const nickNameDAODAO = await getDaoDaoNickname(sender)
                             
-                            telegramMsg = fmt(telegramMsg, '🐳  #Osmosis #Swap #Buy  💸📥🪙\n', 
+                            telegramMsg = fmt(telegramMsg, '🪙  #Osmosis #Swap #Buy  💸📥🪙\n', 
                                 'Address ', code(sender), nickNameDAODAO, ' bought ', bold(amount.toString() + ' PHMN'), '\n'
                             )
                             
@@ -135,7 +135,7 @@ export async function processTxsOsmosis(decodedTxs: DecodedTX[], queryClient: St
                             const sender = decodedMsg.sender
                             const nickNameDAODAO = await getDaoDaoNickname(sender)
                             
-                            telegramMsg = fmt(telegramMsg, '🐳  #Osmosis #Swap #Sell  🪙📤💸\n', 
+                            telegramMsg = fmt(telegramMsg, '🪙  #Osmosis #Swap #Sell  🪙📤💸\n', 
                                 'Address ', code(sender), nickNameDAODAO, ' sold ', bold(amount.toString() + ' PHMN'), '\n'
                             )
                             
@@ -153,7 +153,7 @@ export async function processTxsOsmosis(decodedTxs: DecodedTX[], queryClient: St
                             const sender = decodedMsg.sender
                             const nickNameDAODAO = await getDaoDaoNickname(sender)
                             
-                            telegramMsg = fmt(telegramMsg, '🐳  #Osmosis #Swap #Buy  💸📥🪙\n', 
+                            telegramMsg = fmt(telegramMsg, '🪙  #Osmosis #Swap #Buy  💸📥🪙\n', 
                                 'Address ', code(sender), nickNameDAODAO, ' bought ', bold(amount.toString() + ' PHMN'), '\n'
                             )
 
@@ -249,7 +249,7 @@ export async function processTxsOsmosis(decodedTxs: DecodedTX[], queryClient: St
                             const sender = decodedMsg.sender
                             const nickNameDAODAO = await getDaoDaoNickname(sender)
                             
-                            telegramMsg = fmt(telegramMsg, '🐳  #Osmosis #Swap #Buy  💸📥🪙\n', 
+                            telegramMsg = fmt(telegramMsg, '🪙  #Osmosis #Swap #Buy  💸📥🪙\n', 
                                 'Address ', code(sender), nickNameDAODAO, ' bought ', bold(amount.toString() + ' PHMN'), '\n'
                             )
                             
@@ -267,7 +267,7 @@ export async function processTxsOsmosis(decodedTxs: DecodedTX[], queryClient: St
                             const sender = decodedMsg.sender
                             const nickNameDAODAO = await getDaoDaoNickname(sender)
                             
-                            telegramMsg = fmt(telegramMsg, '🐳  #Osmosis #Swap #Sell  🪙📤💸\n', 
+                            telegramMsg = fmt(telegramMsg, '🪙  #Osmosis #Swap #Sell  🪙📤💸\n', 
                                 'Address ', code(sender), nickNameDAODAO, ' sold ', bold(amount.toString() + ' PHMN'), '\n'
                             )
                             
