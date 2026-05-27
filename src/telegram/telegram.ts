@@ -9,8 +9,8 @@ const TOKEN = process.env.DEPLOYMENT === 'production' ? process.env.TELEGRAM_BOT
 
 if (!process.env.TELEGRAM_ADMIN_ID) throw new Error('"TELEGRAM_ADMIN_ID" env var is required!');
 const ADMIN = +process.env.TELEGRAM_ADMIN_ID
-if (!process.env.WHALES_CHAT_ID) throw new Error('"WHALES_CHAT_ID" env var is required!')
-const CHANNEL_CHAT_ID = +process.env.WHALES_CHAT_ID
+if (!process.env.PHMNN_UNLIM_CHAT_ID) throw new Error('"PHMNN_UNLIM_CHAT_ID" env var is required!')
+const CHANNEL_CHAT_ID = +process.env.PHMNN_UNLIM_CHAT_ID
 if (!process.env.SERVICE_CHAT_ID) throw new Error('"SERVICE_CHAT_ID" env var is required!')
 const SERVICE_CHAT_ID = +process.env.SERVICE_CHAT_ID
 
