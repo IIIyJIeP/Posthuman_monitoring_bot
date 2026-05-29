@@ -387,12 +387,12 @@ export async function processTxsJuno (decodedTxs: DecodedTX[], queryClient: Star
                 const packeSequence = msg.packet?.sequence.toString()||''
                 const telegramMsg = ibcMsgsBuffer.find((msg) => msg.packet_sequence === packeSequence)?.telegramMsg
                 if (telegramMsg) {
-                    deleteIbcTx(packeSequence)
                     const acknowledgement = JSON.parse(new TextDecoder().decode(msg.acknowledgement))
                     if (acknowledgement.result === 'MQ==' || acknowledgement.result === 'AQ==') {
                         if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
                         if (indexedTx.code === 0) {
                             telegramMsgs.push(telegramMsg)
+                            deleteIbcTx(packeSequence)
                         }
                     }
                 }
