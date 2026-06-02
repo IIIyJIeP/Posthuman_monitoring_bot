@@ -243,12 +243,12 @@ export async function processTxsNeutron(decodedTxs: DecodedTX[], queryClient: St
                         if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
                         if (indexedTx.code !== 0) continue;
                         const amount = +(indexedTx.events.find(
-                            ev => ev.type === 'token_swapped' && ev.attributes.find(
-                                attr => attr.key === 'tokens_out'
+                            ev => ev.type === 'wasm' && ev.attributes.find(
+                                attr => attr.key === 'ask_asset'
                             )?.value.includes(denomPHMNneutron)
                         )?.attributes.find(
-                            attr => attr.key === 'tokens_out'
-                        )?.value.replace(denomPHMNneutron, '') || '0') / 1e6
+                            attr => attr.key === 'return_amount'
+                        )?.value || '0') / 1e6
                         if (amount < minAmountPHMN) continue;
 
                         const sender = decodedMsg.sender
