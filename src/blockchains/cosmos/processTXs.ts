@@ -155,30 +155,49 @@ export async function processTxsCosmosHub(decodedTxs: DecodedTX[], queryClient: 
                         evnt.attributes.find(attr => attr.key === 'sender')?.value === StrategicSubDaoContract &&
                         evnt.attributes.find(attr => attr.key === 'amount')?.value?.includes(denomPHMNcosmoshub)
                     )
-                    if (!transferEvent) continue;
-                    const transferAmount = transferEvent.attributes.find(attr => attr.key === 'amount')?.value.replace(denomPHMNcosmoshub, '')
 
-                    const amount = Number(transferAmount) / 1e6
-                    if (amount < minAmountPHMN) continue;
+                    const mintEvent = indexedTx.events.find(evnt =>
+                        evnt.type === 'tf_mint' &&
+                        evnt.attributes.find(attr => attr.key === 'amount')?.value?.includes(denomPHMNcosmoshub)
+                    )
 
-                    const toAddress = transferEvent.attributes.find(attr => attr.key === 'recipient')?.value
-                    if (!toAddress) continue;
+                    if (transferEvent) { // #Send
+                        // #Send
+                        const transferAmount = transferEvent.attributes.find(attr => attr.key === 'amount')?.value.replace(denomPHMNcosmoshub, '')
 
-                    const toAddressDaoDaoNick = await getDaoDaoNickname(toAddress)
+                        const amount = Number(transferAmount) / 1e6
+                        if (amount < minAmountPHMN) continue;
 
-                    if (countMsgs === 0) {
-                        telegramMsg = fmt(telegramMsg, '🐳  #CosmosHub #Send  📬\n',
-                            'Strategic SubDao sent ', bold(amount.toString() + ' PHMN'), ' to ', code(toAddress), toAddressDaoDaoNick, '\n'
-                        )
-                    } else {
-                        if (countMsgs > 1) telegramMsg.text = telegramMsg.text.replace(/...\n$/, '');
+                        const toAddress = transferEvent.attributes.find(attr => attr.key === 'recipient')?.value
+                        if (!toAddress) continue;
 
-                        telegramMsg = fmt(telegramMsg, '🐳  #CosmosHub #Send  📬\n',
-                            'sent ', bold(amount.toString() + ' PHMN'), ' to ', code(toAddress), toAddressDaoDaoNick, '\n',
-                            '...\n'
-                        )
+                        const toAddressDaoDaoNick = await getDaoDaoNickname(toAddress)
+
+                        if (countMsgs === 0) {
+                            telegramMsg = fmt(telegramMsg, '🐳  #CosmosHub #Send  📬\n',
+                                'Strategic SubDao sent ', bold(amount.toString() + ' PHMN'), ' to ', code(toAddress), toAddressDaoDaoNick, '\n'
+                            )
+                        } else {
+                            if (countMsgs > 1) telegramMsg.text = telegramMsg.text.replace(/...\n$/, '');
+
+                            telegramMsg = fmt(telegramMsg, '🐳  #CosmosHub #Send  📬\n',
+                                'sent ', bold(amount.toString() + ' PHMN'), ' to ', code(toAddress), toAddressDaoDaoNick, '\n',
+                                '...\n'
+                            )
+                        }
+                        countMsgs++
                     }
-                    countMsgs++
+                    if (mintEvent) { // #Mint
+                        // #Mint
+                        const mintAmount = mintEvent.attributes.find(attr => attr.key === 'amount')?.value.replace(denomPHMNcosmoshub, '')
+                        const amount = Number(mintAmount) / 1e6
+
+                        telegramMsg = fmt(telegramMsg, '🐳  #Mint  🪙\n',
+                            'Strategic SubDao minted ',
+                            bold(amount.toString() + ' PHMN'), '\n'
+                        )
+                        countMsgs++
+                    }
                 }
             }
         }
