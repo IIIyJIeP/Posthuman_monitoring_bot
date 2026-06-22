@@ -9,13 +9,16 @@
     "StrategicSubDaoContract": "cosmos146s5j3t7gh2g37ywm47dp8avhesu2htvjjaxq7z55e7xj0rq0k8q5qnjjy",
     "StrategicSubDaoGovContract": "cosmos1lwn2ell964rnjm9zg7ysqcz6cdr64srgh3r2zp84f0w3chfvzw3syutpza",
     "contractPHMNJuno": "",
-    "contractDASHold": "",
+    
+    "dasProposalsURL": "",
+    "contractDASHold": "cosmos15nafa2hazwmjs8yz844h5ry5yrzvz6q96a0300ge26vm8hcsrd4s7zxhyj",
+    "contractDasPropose": "",
+    "contractDasGovernance": "",
+    "dasTreasuryAddress": "cosmos1lj6knrgumqr5a9jxmkqeag476gmzgn24mv0w3548tyw6a5ryr7ms6xl599",
+    
+    
     "contractIbcPhmnJuno": "",
     "contractIbcPhmnNeutron": "",
-    "contractDasPropose": "",
-    "dasProposalsURL": "",
-    "contractDasGovernance": "",
-    "dasTreasuryAddress": "",
     "denomPHMNcosmoshub": "factory/cosmos146s5j3t7gh2g37ywm47dp8avhesu2htvjjaxq7z55e7xj0rq0k8q5qnjjy/PHMN",
     "denomPHMNosmosis": "",
     "denomPHMNneutron": "",
@@ -56,16 +59,25 @@
     ],
     "subdaoTreasuryAddresses" : [
         {
+            "subdaoTag": "DAS",
+            "treasuryAddress": "cosmos1lj6knrgumqr5a9jxmkqeag476gmzgn24mv0w3548tyw6a5ryr7ms6xl599"
+        },
+        {
             "subdaoTag": "StrategicSubDao",
             "treasuryAddress": "cosmos146s5j3t7gh2g37ywm47dp8avhesu2htvjjaxq7z55e7xj0rq0k8q5qnjjy"
         },
         {
+            "subdaoTag": "LiquiditySubDAO",
+            "treasuryAddress": "cosmos1pu90e2gm2kq9lvheqzrh0tl9dw5aqg6v5gr9jug2eqdel0vzuxkqvg72nn"
+        },
+        
+        
+        
+        
+        
+        {
             "subdaoTag": "CoreTeamSubDAO",
             "treasuryAddress": "juno1mptmak8ecmzwghtd4mep82jdkmdt0n6d8ggcd5hjmrfxasjc0epstkvwha"
-        },
-        {
-            "subdaoTag": "StrategicSubDao",
-            "treasuryAddress": "juno1ejdt5w55ad8c3syj8mph3xhchee2jtlcfpw9sm0mq2fh80qygudsjzrwjj"
         },
         {
             "subdaoTag": "ReputationSubDAO",
@@ -74,10 +86,6 @@
         {
             "subdaoTag": "InvestmentsSubDAO",
             "treasuryAddress": "juno198r8220mah5jn5fnxcgjds4j4pf48wyz0e40m0zdtw2385m08zmqqwhumq"
-        },
-        {
-            "subdaoTag": "WyndLiquiditySubDAO",
-            "treasuryAddress": "juno1gsrhz6vqgjyz9ar3tr7w4hzk5n6dtwt66hjtjyn0hqycje3pzpaq73395c"
         },
         {
             "subdaoTag": "ContentSubDAO",

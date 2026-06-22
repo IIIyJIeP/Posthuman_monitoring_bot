@@ -11,7 +11,8 @@ import { MsgExecuteContract } from '@neutron-org/neutronjs/cosmwasm/wasm/v1/tx'
 
 import {
     minAmountPHMN as minAmountPHMNprod, minAmountPHMNtest,
-    denomPHMNcosmoshub, explorerTxCosmosHub, StrategicSubDaoGovContract, StrategicSubDaoContract
+    denomPHMNcosmoshub, explorerTxCosmosHub, StrategicSubDaoGovContract, StrategicSubDaoContract,
+    contractDASHold
 } from '../../config.json'
 import { getDaoDaoNickname } from '../daoDaoNames'
 import { getIndexedTx } from '../getTx'
@@ -195,6 +196,70 @@ export async function processTxsCosmosHub(decodedTxs: DecodedTX[], queryClient: 
                         telegramMsg = fmt(telegramMsg, '🐳  #Mint  🪙\n',
                             'Strategic SubDao minted ',
                             bold(amount.toString() + ' PHMN'), '\n'
+                        )
+                        countMsgs++
+                    }
+                } else if (decodedMsg.contract === contractDASHold) { // #DAS
+                    // #DAS
+                    if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                    if (indexedTx.code !== 0) continue
+
+                    const executeContractMsg = JSON.parse(new TextDecoder().decode(decodedMsg.msg))
+                    if (executeContractMsg.stake) { // #HOLD
+                        // #HOLD
+
+                        const amount = decodedMsg.funds.find(coin => coin.denom === denomPHMNcosmoshub)?.amount
+                        if (!amount) continue;
+                        const amountNum = Number(amount) / 1e6
+                        if (amountNum < minAmountPHMN) continue;
+
+                        const sender = decodedMsg.sender
+                        const senderDaoDaoNick = await getDaoDaoNickname(sender)
+
+                        telegramMsg = fmt(telegramMsg, '🐳 #CosmosHub #DAS #Hold  🔐\n',
+                            'Address ', code(sender), senderDaoDaoNick,
+                            ' just increased holdings in the DAS by ',
+                            bold(amount.toString() + ' PHMN'), '\n'
+                        )
+                        countMsgs++
+                    } else if (executeContractMsg.unstake) { // #Unlock
+                        // #Unlock
+
+                        const amount = +executeContractMsg.unstake.amount / 1e6
+                        if (amount < minAmountPHMN) continue;
+
+                        const sender = decodedMsg.sender
+                        const senderDaoDaoNick = await getDaoDaoNickname(sender)
+
+                        const claimDuration = +(indexedTx.events.find((evnt) =>
+                            evnt.type === 'wasm' &&
+                            evnt.attributes.find((atr) =>
+                                atr.key === 'claim_duration'
+                            )
+                        )?.attributes.find((atr) =>
+                            atr.key === 'claim_duration'
+                        )?.value.replace('time: ', '') || '-86400') / 86400
+
+                        telegramMsg = fmt(telegramMsg, '🐳  #CosmosHub #DAS #Unlock  🔓\n',
+                            'Address ', code(sender), senderDaoDaoNick, ' requested unlock ',
+                            bold(amount.toString() + ' PHMN'), ' from DAS. Claim duration ',
+                            claimDuration.toString(), ' days\n'
+                        )
+                        countMsgs++
+                    } else if (executeContractMsg.claim) {
+                        // #Withdraw
+
+                        const amount = +(indexedTx.events.find((ev) =>
+                            ev.type === 'wasm' &&
+                            ev.attributes.find((atr) => atr.key === '_contract_address')?.value === contractDASHold
+                        )?.attributes.find((atr) => atr.key === 'amount')?.value || '0') / 1e6
+                        if (amount < minAmountPHMN) continue;
+
+                        const sender = decodedMsg.sender
+                        const senderDaoDaoNick = await getDaoDaoNickname(sender)
+
+                        telegramMsg = fmt(telegramMsg, '🐳  #DAS #Withdraw  📬🪙📭\n',
+                            'Address ', code(sender), senderDaoDaoNick, ' withdraw from the DAS ', bold(amount.toString() + ' PHMN'), '\n'
                         )
                         countMsgs++
                     }
