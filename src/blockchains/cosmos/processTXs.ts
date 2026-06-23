@@ -151,7 +151,7 @@ export async function processTxsCosmosHub(decodedTxs: DecodedTX[], queryClient: 
                     if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId);
                     if (indexedTx.code !== 0) continue;
 
-                    const transferEvent = indexedTx.events.find(evnt =>
+                    const transferEvents = indexedTx.events.filter(evnt =>
                         evnt.type === 'transfer' &&
                         evnt.attributes.find(attr => attr.key === 'sender')?.value === StrategicSubDaoContract &&
                         evnt.attributes.find(attr => attr.key === 'amount')?.value?.includes(denomPHMNcosmoshub)
@@ -162,7 +162,7 @@ export async function processTxsCosmosHub(decodedTxs: DecodedTX[], queryClient: 
                         evnt.attributes.find(attr => attr.key === 'amount')?.value?.includes(denomPHMNcosmoshub)
                     )
 
-                    if (transferEvent) { // #Send
+                    for (const transferEvent of transferEvents) { // #Send
                         // #Send
                         const transferAmount = transferEvent.attributes.find(attr => attr.key === 'amount')?.value.replace(denomPHMNcosmoshub, '')
 
