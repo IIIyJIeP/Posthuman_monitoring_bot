@@ -164,6 +164,7 @@ export async function processTxsCosmosHub(decodedTxs: DecodedTX[], queryClient: 
 
                     for (const transferEvent of transferEvents) { // #Send
                         // #Send
+                        if (countMsgs > 19) continue;
                         const transferAmount = transferEvent.attributes.find(attr => attr.key === 'amount')?.value.replace(denomPHMNcosmoshub, '')
 
                         const amount = Number(transferAmount) / 1e6
