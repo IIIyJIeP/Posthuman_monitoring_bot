@@ -219,7 +219,7 @@ export async function processTxsCosmosHub(decodedTxs: DecodedTX[], queryClient: 
                         telegramMsg = fmt(telegramMsg, '🪙 #CosmosHub #DAS #Hold  🔐\n',
                             'Address ', code(sender), senderDaoDaoNick,
                             ' just increased holdings in the DAS by ',
-                            bold(amount.toString() + ' PHMN'), '\n'
+                            bold(amountNum.toString() + ' PHMN'), '\n'
                         )
                         countMsgs++
                     } else if (executeContractMsg.unstake) { // #Unlock
