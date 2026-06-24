@@ -19,14 +19,7 @@
     "escrowIbcPhmnOsmosis": "cosmos1x54ltnyg88k0ejmk8ytwrhd3ltm84xehrnlslf",
     "denomPHMNosmosis": "ibc/243B3934C4462EE254C84AA31AF42E34F1869418194D3E4161E4A659A01AC6E6",
     "contractSkipSwap": "osmo1vkdakqqg5htq5c3wy2kj2geq536q665xdexrtjuwqckpads2c2nsvhhcyv",
-    "poolsPHMNosmosis": [
-        {
-            "poolId": 1255,
-            "secondTokenDenom": "Atom",
-            "secondTokenBaseDenom": "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
-            "secondTokenMultiplier": 1e6
-        }
-    ],
+    
     "subdaoTreasuryAddresses" : [
         {
             "subdaoTag": "DAS",

@@ -2,7 +2,7 @@ import { StargateClient } from '@cosmjs/stargate'
 import { osmosis } from 'osmojs'
 import { QueryDenomMetadataRequest, QueryDenomMetadataResponse } from 'osmojs/dist/codegen/cosmos/bank/v1beta1/query'
 import type { DenomUnit } from 'osmojs/dist/codegen/cosmos/bank/v1beta1/bank'
-import { poolsPHMNosmosis, denomPHMNosmosis } from '../../config.json'
+import { denomPHMNosmosis } from '../../config.json'
 
 export async function getPoolInfo (poolId: bigint, queryClient: StargateClient) {
     const qc = (queryClient as any).forceGetQueryClient()
