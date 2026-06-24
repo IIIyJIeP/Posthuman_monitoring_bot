@@ -4,7 +4,6 @@
     "daoDaoNamesURL": "https://pfpk.daodao.zone/address/",
     "explorerTxCosmosHub": "https://www.mintscan.io/cosmos/tx/",
     "explorerTxOsmosisURL": "https://www.mintscan.io/osmosis/tx/",
-    "explorerTxNeutronURL": "https://www.mintscan.io/neutron/tx/",
     "explorerTxJunoURL": "https://ping.pub/juno/tx/",
     "StrategicSubDaoContract": "cosmos146s5j3t7gh2g37ywm47dp8avhesu2htvjjaxq7z55e7xj0rq0k8q5qnjjy",
     "StrategicSubDaoGovContract": "cosmos1lwn2ell964rnjm9zg7ysqcz6cdr64srgh3r2zp84f0w3chfvzw3syutpza",
