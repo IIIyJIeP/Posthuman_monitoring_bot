@@ -12,12 +12,12 @@ export async function app() {
     try {
         TelegramBot.run()
 
-        // const osmoQueryClient = await StargateClient.connect(osmoRpcEndpoint)
+        const osmoQueryClient = await StargateClient.connect(osmoRpcEndpoint)
         // const junoQueryClient = await StargateClient.connect(junoRpcEndpoint)
         // const neutronQueryClient = await StargateClient.connect(neutronRpcEndpoint)
         const cosmoshubQueryClient = await StargateClient.connect(cosmoshubRpcEndpoint)
 
-        // start_polling(osmoQueryClient, 'Osmosis')
+        start_polling(osmoQueryClient, 'Osmosis')
         // start_polling(junoQueryClient, 'Juno')
         // start_polling(neutronQueryClient, 'Neutron')
         start_polling(cosmoshubQueryClient, 'CosmosHub')
