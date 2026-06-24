@@ -1,17 +1,42 @@
-import { poolsPHMNosmosis } from '../../config.json'
+import { StargateClient } from '@cosmjs/stargate'
+import { osmosis } from 'osmojs'
+import { QueryDenomMetadataRequest, QueryDenomMetadataResponse } from 'osmojs/dist/codegen/cosmos/bank/v1beta1/query'
+import type { DenomUnit } from 'osmojs/dist/codegen/cosmos/bank/v1beta1/bank'
+import { poolsPHMNosmosis, denomPHMNosmosis } from '../../config.json'
 
+export async function getPoolInfo (poolId: bigint, queryClient: StargateClient) {
+    const qc = (queryClient as any).forceGetQueryClient()
 
-export function isPHMNpool (poolId: bigint) {
-    if (poolsPHMNosmosis.find((pool)=>BigInt(pool.poolId) === poolId)) return true
-    return false
-}
+    const poolResult = await qc.queryAbci(
+        '/osmosis.gamm.v1beta1.Query/Pool',
+        osmosis.gamm.v1beta1.QueryPoolRequest.encode({ poolId }).finish(),
+        undefined
+    )
+    const { pool } = osmosis.gamm.v1beta1.QueryPoolResponse.decode(poolResult.value)
+    if (!pool) return undefined
 
-export function getPoolInfo (poolId: bigint) {
-    const poolInfo = poolsPHMNosmosis.find((pool)=>BigInt(pool.poolId) === poolId)
-    return poolInfo ? {
-        poolId: BigInt(poolInfo.poolId),
-        secondTokenDenom: poolInfo.secondTokenDenom,
-        secondTokenBaseDenom: poolInfo.secondTokenBaseDenom,
-        secondTokenMultiplier: poolInfo.secondTokenMultiplier
-    } : undefined
+    const phmn = pool.poolAssets.find(a => a.token.denom === denomPHMNosmosis)
+    if (!phmn) return undefined
+
+    const secondAsset = pool.poolAssets.find(a => a.token.denom !== denomPHMNosmosis)
+    if (!secondAsset) return undefined
+
+    const secondTokenBaseDenom = secondAsset.token.denom
+
+    const metaResult = await qc.queryAbci(
+        '/cosmos.bank.v1beta1.Query/DenomMetadata',
+        QueryDenomMetadataRequest.encode({ denom: secondTokenBaseDenom }).finish(),
+        undefined
+    )
+    const { metadata } = QueryDenomMetadataResponse.decode(metaResult.value)
+    const displayUnit = metadata?.denomUnits.find((u: DenomUnit) => u.denom === metadata.display)
+    const secondTokenMultiplier = displayUnit ? Math.pow(10, displayUnit.exponent) : 1
+    const secondTokenDenom = metadata?.symbol || metadata?.display || secondTokenBaseDenom
+
+    return {
+        poolId,
+        secondTokenBaseDenom,
+        secondTokenDenom,
+        secondTokenMultiplier
+    }
 }
