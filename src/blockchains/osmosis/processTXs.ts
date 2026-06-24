@@ -8,7 +8,7 @@ import {
     minAmountPHMN as minAmountPHMNprod, minAmountPHMNtest,
     explorerTxOsmosisURL, denomPHMNosmosis,
 } from '../../config.json'
-import { isPHMNpool, getPoolInfo } from './poolInfo'
+import { getPoolInfo } from './poolInfo'
 import { Registry } from "@cosmjs/proto-signing"
 import { MsgSend } from 'osmojs/dist/codegen/cosmos/bank/v1beta1/tx'
 import { getIndexedTx } from '../getTx'
@@ -242,38 +242,38 @@ export async function processTxsOsmosis(decodedTxs: DecodedTX[], queryClient: St
             } else if (msg.typeUrl === '/osmosis.gamm.v1beta1.MsgJoinPool') { // #AddLiquidity
                 // #AddLiquidity
                 const decodedMsg = osmosis.gamm.v1beta1.MsgJoinPool.decode(msg.value)
-                if (isPHMNpool(decodedMsg.poolId)) {
-                    if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
-                    if (indexedTx.code === 0) {
-                        const poolInfo = getPoolInfo(decodedMsg.poolId)
-                        const tokenIns = osmosis.gamm.v1beta1.MsgJoinPoolResponse
-                            .decode(indexedTx.msgResponses[i].value)
-                            .tokenIn
-                        const amountPHMN = +tokenIns.find((coin) => coin.denom === denomPHMNosmosis)!.amount / 1e6
-                        const amountSecondToken = +tokenIns
-                            .find((coin) => coin.denom === poolInfo!.secondTokenBaseDenom)!
-                            .amount / poolInfo!.secondTokenMultiplier
-                        if (amountPHMN >= minAmountPHMN) {
-                            const sender = decodedMsg.sender
-                            const senderDaoDaoNick = await getDaoDaoNickname(sender)
+                const poolInfo = await getPoolInfo(decodedMsg.poolId, queryClient)
+                if (!poolInfo) continue;
+                if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
+                if (indexedTx.code === 0) {
+                    const tokenIns = osmosis.gamm.v1beta1.MsgJoinPoolResponse
+                        .decode(indexedTx.msgResponses[i].value)
+                        .tokenIn
+                    const amountPHMN = +tokenIns.find((coin) => coin.denom === denomPHMNosmosis)!.amount / 1e6
+                    const amountSecondToken = +tokenIns
+                        .find((coin) => coin.denom === poolInfo.secondTokenBaseDenom)!
+                        .amount / poolInfo.secondTokenMultiplier
+                    if (amountPHMN >= minAmountPHMN) {
+                        const sender = decodedMsg.sender
+                        const senderDaoDaoNick = await getDaoDaoNickname(sender)
 
-                            telegramMsg = fmt(telegramMsg, '🐳  #Osmosis #AddLiquidity  ➕💰\n',
-                                'Address ', code(sender), senderDaoDaoNick, ' added ',
-                                bold(amountPHMN.toString() + ' PHMN'), ' and ',
-                                bold(amountSecondToken.toString() + ' ' + poolInfo!.secondTokenDenom),
-                                ' to the Osmosis liquidity pool #', poolInfo!.poolId.toString(), '\n'
-                            )
+                        telegramMsg = fmt(telegramMsg, '🐳  #Osmosis #AddLiquidity  ➕💰\n',
+                            'Address ', code(sender), senderDaoDaoNick, ' added ',
+                            bold(amountPHMN.toString() + ' PHMN'), ' and ',
+                            bold(amountSecondToken.toString() + ' ' + poolInfo!.secondTokenDenom),
+                            ' to the Osmosis liquidity pool #', poolInfo!.poolId.toString(), '\n'
+                        )
 
-                            countMsgs++
-                        }
+                        countMsgs++
                     }
                 }
             } else if (msg.typeUrl === '/osmosis.gamm.v1beta1.MsgJoinSwapExternAmountIn') {     // #AddLiquidity #SingleAsset
                 // #AddLiquidity #SingleAsset
 
                 const decodedMsg = osmosis.gamm.v1beta1.MsgJoinSwapExternAmountIn.decode(msg.value)
+                const poolInfo = await getPoolInfo(decodedMsg.poolId, queryClient)
                 if (
-                    isPHMNpool(decodedMsg.poolId) &&
+                    !!poolInfo &&
                     decodedMsg.tokenIn.denom === denomPHMNosmosis &&
                     +decodedMsg.tokenIn.amount / 1e6 >= minAmountPHMN
                 ) {
@@ -282,8 +282,7 @@ export async function processTxsOsmosis(decodedTxs: DecodedTX[], queryClient: St
                     if (indexedTx.code === 0) {
                         const sender = decodedMsg.sender
                         const senderDaoDaoNick = await getDaoDaoNickname(sender)
-                        const poolInfo = getPoolInfo(decodedMsg.poolId)
-
+                        
                         telegramMsg = fmt(telegramMsg, '🐳  #Osmosis #AddLiquidity #SingleAsset  ➕💰\n',
                             'Address ', code(sender), senderDaoDaoNick, ' added ',
                             bold((+decodedMsg.tokenIn.amount / 1e6).toString() + ' PHMN'),
@@ -297,13 +296,12 @@ export async function processTxsOsmosis(decodedTxs: DecodedTX[], queryClient: St
                 // #RemoveLiquidity
 
                 const decodedMsg = osmosis.gamm.v1beta1.MsgExitPool.decode(msg.value)
-                if (isPHMNpool(decodedMsg.poolId)) {
+                const poolInfo = await getPoolInfo(decodedMsg.poolId, queryClient)
+                if (poolInfo) {
                     if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
                     if (indexedTx.code === 0) {
                         const response = osmosis.gamm.v1beta1.MsgExitPoolResponse
                             .decode(indexedTx.msgResponses[i].value)
-
-                        const poolInfo = getPoolInfo(decodedMsg.poolId)
 
                         const amountPHMN = +response.tokenOut
                             .find((coin) => coin.denom === denomPHMNosmosis)!
