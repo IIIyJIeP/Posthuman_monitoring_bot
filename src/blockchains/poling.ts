@@ -3,7 +3,6 @@ import { ChainName } from './types'
 import { getLastHeight, setLastHeight } from '../db/db'
 import { decodeTxsInBlock} from './decodeTxs'
 import { processTxsOsmosis } from './osmosis/processTXs'
-import { processTxsJuno } from './juno/processTXs'
 import { TelegramBot } from '../telegram/telegram';
 import { processTxsCosmosHub } from './cosmos/processTXs'
 
@@ -29,9 +28,7 @@ export async function start_polling(queryClient: StargateClient, chainName: Chai
         const block = await queryClient.getBlock(height)
         const decodedTxs = decodeTxsInBlock(block)
         
-        const telegramMsgs = chainName === 'Juno' ? 
-            await processTxsJuno(decodedTxs, queryClient)
-        : chainName === 'Osmosis' ?
+        const telegramMsgs = chainName === 'Osmosis' ?
             await processTxsOsmosis(decodedTxs, queryClient)
         : chainName === 'CosmosHub' ?
             await processTxsCosmosHub(decodedTxs, queryClient)
