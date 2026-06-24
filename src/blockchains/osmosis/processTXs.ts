@@ -6,8 +6,7 @@ import { osmosis, ibc, cosmwasm } from 'osmojs'
 import { getDaoDaoNickname } from '../daoDaoNames'
 import {
     minAmountPHMN as minAmountPHMNprod, minAmountPHMNtest,
-    explorerTxOsmosisURL, denomPHMNosmosis, denomPHMNcosmoshub,
-    escrowIbcPhmnOsmosis
+    explorerTxOsmosisURL, denomPHMNosmosis,
 } from '../../config.json'
 import { isPHMNpool, getPoolInfo } from './poolInfo'
 import { Registry } from "@cosmjs/proto-signing"
