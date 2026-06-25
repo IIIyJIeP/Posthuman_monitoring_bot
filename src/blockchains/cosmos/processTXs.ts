@@ -64,7 +64,7 @@ export async function processTxsCosmosHub(decodedTxs: DecodedTX[], queryClient: 
                                 getDaoDaoNickname(sender),
                                 getDaoDaoNickname(toAddress)
                             ])
-                            telegramMsg = fmt(telegramMsg, '🪙  #CosmosHub #Send  📬\n',
+                            telegramMsg = fmt(telegramMsg, '🐳  #CosmosHub #Send  📬\n',
                                 'Address ', code(sender), senderDaoDaoNick, ' sent ', bold(amount.toString() + ' PHMN'), ' to ', code(toAddress), toAddressDaoDaoNick, '\n'
                             )
                         } else {
@@ -73,7 +73,7 @@ export async function processTxsCosmosHub(decodedTxs: DecodedTX[], queryClient: 
 
                             if (countMsgs > 1) telegramMsg.text = telegramMsg.text.replace(/...\n$/, '');
 
-                            telegramMsg = fmt(telegramMsg, '🪙  #CosmosHub #Send  📬\n',
+                            telegramMsg = fmt(telegramMsg, '🐳  #CosmosHub #Send  📬\n',
                                 'sent ', bold(amount.toString() + ' PHMN'), ' to ', code(toAddress), toAddressDaoDaoNick, '\n',
                                 '...\n'
                             )
@@ -107,7 +107,7 @@ export async function processTxsCosmosHub(decodedTxs: DecodedTX[], queryClient: 
                                 getDaoDaoNickname(receiver),
                             ])
 
-                            telegramMsg = fmt(telegramMsg, '🪙  #CosmosHub #IBCtransfer  📬\n',
+                            telegramMsg = fmt(telegramMsg, '🐳  #CosmosHub #IBCtransfer  📬\n',
                                 'Address ', code(sender), senderDaoDaoNick, ' sent over IBC protocol ',
                                 bold(amount.toString() + ' PHMN'),
                                 ' to ', code(receiver), receiverDaoDaoNick, '\n',
@@ -181,13 +181,13 @@ export async function processTxsCosmosHub(decodedTxs: DecodedTX[], queryClient: 
                     ])
 
                     if (countMsgs === 0) {
-                        telegramMsg = fmt(telegramMsg, '🪙  #CosmosHub #Send  📬\n',
+                        telegramMsg = fmt(telegramMsg, '🐳  #CosmosHub #Send  📬\n',
                             'Address ', code(sender), senderDaoDaoNick, ' sent ', bold(amount.toString() + ' PHMN'), ' to ', code(toAddress), toAddressDaoDaoNick, '\n'
                         )
                     } else {
                         if (countMsgs > 1) telegramMsg.text = telegramMsg.text.replace(/...\n$/, '');
 
-                        telegramMsg = fmt(telegramMsg, '🪙  #CosmosHub #Send  📬\n',
+                        telegramMsg = fmt(telegramMsg, '🐳  #CosmosHub #Send  📬\n',
                             'Address ', code(sender), senderDaoDaoNick, ' sent ', bold(amount.toString() + ' PHMN'), ' to ', code(toAddress), toAddressDaoDaoNick, '\n',
                             '...\n'
                         )
@@ -217,7 +217,7 @@ export async function processTxsCosmosHub(decodedTxs: DecodedTX[], queryClient: 
                     ])
 
                     if (countMsgs === 0) {
-                        telegramMsg = fmt(telegramMsg, '🪙  #CosmosHub #IBCtransfer  📬\n',
+                        telegramMsg = fmt(telegramMsg, '🐳  #CosmosHub #IBCtransfer  📬\n',
                             'Address ', code(sender), senderDaoDaoNick, ' sent over IBC protocol ',
                             bold(amount.toString() + ' PHMN'),
                             ' to ', code(receiver), receiverDaoDaoNick, '\n',
@@ -225,7 +225,7 @@ export async function processTxsCosmosHub(decodedTxs: DecodedTX[], queryClient: 
                     } else {
                         if (countMsgs > 1) telegramMsg.text = telegramMsg.text.replace(/...\n$/, '');
 
-                        telegramMsg = fmt(telegramMsg, '🪙  #CosmosHub #IBCtransfer  📬\n',
+                        telegramMsg = fmt(telegramMsg, '🐳  #CosmosHub #IBCtransfer  📬\n',
                             'Address ', code(sender), senderDaoDaoNick, ' sent over IBC protocol ',
                             bold(amount.toString() + ' PHMN'),
                             ' to ', code(receiver), receiverDaoDaoNick, '\n',
@@ -246,7 +246,7 @@ export async function processTxsCosmosHub(decodedTxs: DecodedTX[], queryClient: 
                         const mintAmount = mintEvent.attributes.find(attr => attr.key === 'amount')?.value.replace(denomPHMNcosmoshub, '')
                         const amount = Number(mintAmount) / 1e6
 
-                        telegramMsg = fmt(telegramMsg, '🪙  #Mint  🪙\n',
+                        telegramMsg = fmt(telegramMsg, '🐳  #Mint  🪙\n',
                             'Strategic SubDao minted ',
                             bold(amount.toString() + ' PHMN'), '\n'
                         )
@@ -266,7 +266,7 @@ export async function processTxsCosmosHub(decodedTxs: DecodedTX[], queryClient: 
                         const sender = decodedMsg.sender
                         const senderDaoDaoNick = await getDaoDaoNickname(sender)
 
-                        telegramMsg = fmt(telegramMsg, '🪙 #CosmosHub #DAS #Hold  🔐\n',
+                        telegramMsg = fmt(telegramMsg, '🐳  #CosmosHub #DAS #Hold  🔐\n',
                             'Address ', code(sender), senderDaoDaoNick,
                             ' just increased holdings in the DAS by ',
                             bold(amountNum.toString() + ' PHMN'), '\n'
@@ -290,7 +290,7 @@ export async function processTxsCosmosHub(decodedTxs: DecodedTX[], queryClient: 
                             atr.key === 'claim_duration'
                         )?.value.replace('time: ', '') || '-86400') / 86400
 
-                        telegramMsg = fmt(telegramMsg, '🪙  #CosmosHub #DAS #Unlock  🔓\n',
+                        telegramMsg = fmt(telegramMsg, '🐳  #CosmosHub #DAS #Unlock  🔓\n',
                             'Address ', code(sender), senderDaoDaoNick, ' requested unlock ',
                             bold(amount.toString() + ' PHMN'), ' from DAS. Claim duration ',
                             claimDuration.toString(), ' days\n'
@@ -308,7 +308,7 @@ export async function processTxsCosmosHub(decodedTxs: DecodedTX[], queryClient: 
                         const sender = decodedMsg.sender
                         const senderDaoDaoNick = await getDaoDaoNickname(sender)
 
-                        telegramMsg = fmt(telegramMsg, '🪙  #DAS #Withdraw  📬🪙📭\n',
+                        telegramMsg = fmt(telegramMsg, '🐳  #DAS #Withdraw  📬🪙📭\n',
                             'Address ', code(sender), senderDaoDaoNick, ' withdraw from the DAS ', bold(amount.toString() + ' PHMN'), '\n'
                         )
                         countMsgs++
