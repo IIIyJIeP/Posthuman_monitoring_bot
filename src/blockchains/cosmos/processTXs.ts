@@ -160,7 +160,7 @@ export async function processTxsCosmosHub(decodedTxs: DecodedTX[], queryClient: 
 
                 for (const transferEvent of transferEvents) { // #Send
                     // #Send
-                    if (countMsgs > 19) continue;
+                    if (countMsgs > 9) continue;
                     const transferAmount = transferEvent.attributes.find(attr => attr.key === 'amount')?.value.replace(denomPHMNcosmoshub, '')
 
                     const amount = Number(transferAmount) / 1e6
@@ -196,7 +196,7 @@ export async function processTxsCosmosHub(decodedTxs: DecodedTX[], queryClient: 
                 }
                 for (const ibcTransferEvent of ibcTransferEvents) { // #IBCtransfer
                     // #IBCtransfer
-                    if (countMsgs > 10) continue;
+                    if (countMsgs > 9) continue;
                     const amount = Number(ibcTransferEvent.attributes.find(attr => attr.key === 'amount')?.value) / 1e6
                     if (amount < minAmountPHMN) continue;
 
