@@ -12,7 +12,7 @@ import { MsgExecuteContract } from '@neutron-org/neutronjs/cosmwasm/wasm/v1/tx'
 import {
     minAmountPHMN as minAmountPHMNprod, minAmountPHMNtest,
     denomPHMNcosmoshub, explorerTxCosmosHub, StrategicSubDaoGovContract, StrategicSubDaoContract,
-    contractDASHold
+    contractDASHold, escrowIbcPhmnOsmosis
 } from '../../config.json'
 import { getDaoDaoNickname } from '../daoDaoNames'
 import { getIndexedTx } from '../getTx'
@@ -145,50 +145,102 @@ export async function processTxsCosmosHub(decodedTxs: DecodedTX[], queryClient: 
                 // #Contracts
 
                 const decodedMsg = MsgExecuteContract.decode(tx.msgs[i].value)
+
+                if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId);
+                if (indexedTx.code !== 0) continue;
+
+                const transferEvents = indexedTx.events.filter(evnt =>
+                    evnt.type === 'transfer' &&
+                    evnt.attributes.find(attr => attr.key === 'amount')?.value?.includes(denomPHMNcosmoshub)
+                )
+                const ibcTransferEvents = indexedTx.events.filter(evnt =>
+                    evnt.type === 'ibc_transfer' &&
+                    evnt.attributes.find(attr => attr.key === 'denom')?.value === denomPHMNcosmoshub
+                )
+
+                for (const transferEvent of transferEvents) { // #Send
+                    // #Send
+                    if (countMsgs > 19) continue;
+                    const transferAmount = transferEvent.attributes.find(attr => attr.key === 'amount')?.value.replace(denomPHMNcosmoshub, '')
+
+                    const amount = Number(transferAmount) / 1e6
+                    if (amount < minAmountPHMN) continue;
+
+                    const sender = transferEvent.attributes.find(attr => attr.key === 'sender')?.value
+                    if (!sender) continue;
+                    const toAddress = transferEvent.attributes.find(attr => attr.key === 'recipient')?.value
+                    if (!toAddress) continue;
+                    if (toAddress === escrowIbcPhmnOsmosis) continue;
+
+                    const [
+                        toAddressDaoDaoNick, 
+                        senderDaoDaoNick
+                    ] = await Promise.all([
+                        getDaoDaoNickname(toAddress),
+                        getDaoDaoNickname(sender),
+                    ])
+
+                    if (countMsgs === 0) {
+                        telegramMsg = fmt(telegramMsg, '🪙  #CosmosHub #Send  📬\n',
+                            'Address ', code(sender), senderDaoDaoNick, ' sent ', bold(amount.toString() + ' PHMN'), ' to ', code(toAddress), toAddressDaoDaoNick, '\n'
+                        )
+                    } else {
+                        if (countMsgs > 1) telegramMsg.text = telegramMsg.text.replace(/...\n$/, '');
+
+                        telegramMsg = fmt(telegramMsg, '🪙  #CosmosHub #Send  📬\n',
+                            'Address ', code(sender), senderDaoDaoNick, ' sent ', bold(amount.toString() + ' PHMN'), ' to ', code(toAddress), toAddressDaoDaoNick, '\n',
+                            '...\n'
+                        )
+                    }
+                    countMsgs++
+                }
+                for (const ibcTransferEvent of ibcTransferEvents) { // #IBCtransfer
+                    // #IBCtransfer
+                    if (countMsgs > 10) continue;
+                    const amount = Number(ibcTransferEvent.attributes.find(attr => attr.key === 'amount')?.value) / 1e6
+                    if (amount < minAmountPHMN) continue;
+
+                    const sender = ibcTransferEvent.attributes.find(attr => attr.key === 'sender')?.value
+                    if (!sender) continue;
+                    const toAddress = ibcTransferEvent.attributes.find(attr => attr.key === 'receiver')?.value
+                    if (!toAddress) continue;
+                    
+                    const ibcMemo = ibcTransferEvent.attributes.find(attr => attr.key === 'memo')?.value || ''
+                    const receiver = getReceiverFromMemo(ibcMemo) || toAddress
+                    
+                    const [
+                        receiverDaoDaoNick, 
+                        senderDaoDaoNick
+                    ] = await Promise.all([
+                        getDaoDaoNickname(receiver),
+                        getDaoDaoNickname(sender),
+                    ])
+
+                    if (countMsgs === 0) {
+                        telegramMsg = fmt(telegramMsg, '🪙  #CosmosHub #IBCtransfer  📬\n',
+                            'Address ', code(sender), senderDaoDaoNick, ' sent over IBC protocol ',
+                            bold(amount.toString() + ' PHMN'),
+                            ' to ', code(receiver), receiverDaoDaoNick, '\n',
+                        )
+                    } else {
+                        if (countMsgs > 1) telegramMsg.text = telegramMsg.text.replace(/...\n$/, '');
+
+                        telegramMsg = fmt(telegramMsg, '🪙  #CosmosHub #IBCtransfer  📬\n',
+                            'Address ', code(sender), senderDaoDaoNick, ' sent over IBC protocol ',
+                            bold(amount.toString() + ' PHMN'),
+                            ' to ', code(receiver), receiverDaoDaoNick, '\n',
+                            '...\n'
+                        )
+                    }
+                    countMsgs++
+                }
                 if (decodedMsg.contract === StrategicSubDaoGovContract) { // StrategicSubDao
                     // StrategicSubDao
-
-                    if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId);
-                    if (indexedTx.code !== 0) continue;
-
-                    const transferEvents = indexedTx.events.filter(evnt =>
-                        evnt.type === 'transfer' &&
-                        evnt.attributes.find(attr => attr.key === 'sender')?.value === StrategicSubDaoContract &&
-                        evnt.attributes.find(attr => attr.key === 'amount')?.value?.includes(denomPHMNcosmoshub)
-                    )
-
                     const mintEvent = indexedTx.events.find(evnt =>
                         evnt.type === 'tf_mint' &&
                         evnt.attributes.find(attr => attr.key === 'amount')?.value?.includes(denomPHMNcosmoshub)
                     )
 
-                    for (const transferEvent of transferEvents) { // #Send
-                        // #Send
-                        if (countMsgs > 19) continue;
-                        const transferAmount = transferEvent.attributes.find(attr => attr.key === 'amount')?.value.replace(denomPHMNcosmoshub, '')
-
-                        const amount = Number(transferAmount) / 1e6
-                        if (amount < minAmountPHMN) continue;
-
-                        const toAddress = transferEvent.attributes.find(attr => attr.key === 'recipient')?.value
-                        if (!toAddress) continue;
-
-                        const toAddressDaoDaoNick = await getDaoDaoNickname(toAddress)
-
-                        if (countMsgs === 0) {
-                            telegramMsg = fmt(telegramMsg, '🪙  #CosmosHub #Send  📬\n',
-                                'Strategic SubDao sent ', bold(amount.toString() + ' PHMN'), ' to ', code(toAddress), toAddressDaoDaoNick, '\n'
-                            )
-                        } else {
-                            if (countMsgs > 1) telegramMsg.text = telegramMsg.text.replace(/...\n$/, '');
-
-                            telegramMsg = fmt(telegramMsg, '🪙  #CosmosHub #Send  📬\n',
-                                'sent ', bold(amount.toString() + ' PHMN'), ' to ', code(toAddress), toAddressDaoDaoNick, '\n',
-                                '...\n'
-                            )
-                        }
-                        countMsgs++
-                    }
                     if (mintEvent) { // #Mint
                         // #Mint
                         const mintAmount = mintEvent.attributes.find(attr => attr.key === 'amount')?.value.replace(denomPHMNcosmoshub, '')
@@ -202,9 +254,6 @@ export async function processTxsCosmosHub(decodedTxs: DecodedTX[], queryClient: 
                     }
                 } else if (decodedMsg.contract === contractDASHold) { // #DAS
                     // #DAS
-                    if (indexedTx === null) indexedTx = await getIndexedTx(queryClient, tx.txId)
-                    if (indexedTx.code !== 0) continue
-
                     const executeContractMsg = JSON.parse(new TextDecoder().decode(decodedMsg.msg))
                     if (executeContractMsg.stake) { // #HOLD
                         // #HOLD
