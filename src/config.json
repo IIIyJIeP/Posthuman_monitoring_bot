@@ -8,6 +8,14 @@
     "StrategicSubDaoContract": "cosmos146s5j3t7gh2g37ywm47dp8avhesu2htvjjaxq7z55e7xj0rq0k8q5qnjjy",
     "StrategicSubDaoGovContract": "cosmos1lwn2ell964rnjm9zg7ysqcz6cdr64srgh3r2zp84f0w3chfvzw3syutpza",
     
+    "denomPHMNneutron": "ibc/0D72F33FDA6B029A6F84A6A0A502922349AE63D4F261EC523E2D5A65B08DC87B",
+    "explorerTxNeutronURL": "https://www.mintscan.io/neutron/tx/",
+    "contractPhmnPoolNeutron": "neutron17ra5n3796kw0eq9veu4pg3wsssezhzq6dp7ygsyh8sp9f7f4luvsg0hpu4",
+    "denomUSDCneutron": "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
+    
+
+
+
     "dasProposalsURL": "",
     "contractDASHold": "cosmos15nafa2hazwmjs8yz844h5ry5yrzvz6q96a0300ge26vm8hcsrd4s7zxhyj",
     "contractDasPropose": "",
