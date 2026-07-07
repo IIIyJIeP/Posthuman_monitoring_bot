@@ -296,7 +296,8 @@ export async function processTxsCosmosHub(decodedTxs: DecodedTX[], queryClient: 
                             claimDuration.toString(), ' days\n'
                         )
                         countMsgs++
-                    } else if (executeContractMsg.claim) {
+                    } else if (executeContractMsg.claim) { // #Withdraw
+
                         // #Withdraw
 
                         const amount = +(indexedTx.events.find((ev) =>
